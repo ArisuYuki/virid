@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "@starry/core": [
+                "packages/core/index.ts"
+            ],
+            "@starry/vue": [
+                "packages/vue/index.ts"
+            ]
+        },
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "module": "ESNext",
+        "moduleResolution": "node",
+        "target": "ESNext",
+        "lib": [
+            "ESNext",
+            "DOM"
+        ]
+    }
+}

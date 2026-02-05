@@ -1,0 +1,17 @@
+{
+  "name": "@starry/vue",
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsup index.ts --format esm,cjs --dts --clean --external vue --external @starry/core --external reflect-metadata --external inversify"
+  },
+  "dependencies": {
+    "@starry/core": "workspace:*"
+  },
+  "peerDependencies": {
+    "vue": "^3.0.0",
+    "inversify": "^7.11.0"
+  }
+}

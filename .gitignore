@@ -1,0 +1,10 @@
+# --- 依赖与包管理器 ---
+node_modules/
+.pnpm-debug.log
+pnpm-lock.yaml
+dist/
+*.tsbuildinfo
+.vscode/
+.env
+.env.*
+!.env.example

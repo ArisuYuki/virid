@@ -1,0 +1,16 @@
+{
+  "name": "@starry/core",
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsup index.ts --format esm,cjs --dts --clean --external reflect-metadata --external inversify"
+  },
+  "dependencies": {
+    "inversify": "^7.11.0"
+  },
+  "peerDependencies": {
+    "reflect-metadata": "^0.2.2"
+  }
+}
