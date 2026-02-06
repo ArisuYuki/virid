@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div>这是一个歌单页面，有很多首歌</div>
+    <div>This is a playlist page with many songs</div>
     <div v-for="(item, index) in plct.playlist" :key="item.id">
       <Song :index="index"></Song>
     </div>

@@ -1,5 +1,5 @@
 <template>
-  <div>这是一个其他的测试页面，用于测试路由跳转功能</div>
+  <div>This is another test page used to test the routing and navigation functionality</div>
 </template>
 
 <script setup lang="ts"></script>
