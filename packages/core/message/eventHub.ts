@@ -2,7 +2,7 @@
  * @Author: ShirahaYuki  shirhayuki2002@gmail.com
  * @Date: 2026-01-31 19:35:14
  * @LastEditors: ShirahaYuki  shirhayuki2002@gmail.com
- * @LastEditTime: 2026-02-05 20:41:52
+ * @LastEditTime: 2026-02-06 11:22:23
  * @FilePath: /starry-project/packages/core/message/eventHub.ts
  * @Description:消息管理中心
  *
@@ -39,7 +39,7 @@ export class EventHub {
       // 如果既不是信号也不是事件，说明该消息没有继承正确的基类
       MessageWriter.error(
         new Error(
-          `[Starry Message] Invalid Message:\n ${event.constructor.name} must extend SingleMessage or EventMessage`,
+          `[Starry Message] Invalid Message:\n${event.constructor.name} must extend SingleMessage or EventMessage`,
         ),
       );
     }

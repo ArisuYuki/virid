@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "module": "NodeNext", // 适配最新的 Node ESM
+    "moduleResolution": "NodeNext",
+    "target": "ES2022", // 支持 class 静态字段
+    "esModuleInterop": true,
+    "lib": [
+      "ESNext",
+      "DOM"
+    ]
+  }
+}

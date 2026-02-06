@@ -2,7 +2,7 @@
  * @Author: ShirahaYuki  shirhayuki2002@gmail.com
  * @Date: 2026-02-03 11:05:48
  * @LastEditors: ShirahaYuki  shirhayuki2002@gmail.com
- * @LastEditTime: 2026-02-05 23:23:38
+ * @LastEditTime: 2026-02-06 11:34:00
  * @FilePath: /starry-project/packages/vue/adapters/bind.ts
  * @Description: hook绑定适配器，用于处理各种魔法装饰器的绑定逻辑
  *
@@ -41,7 +41,7 @@ export class GlobalRegistry {
     } else {
       MessageWriter.error(
         new Error(
-          `[Starry UseController] Duplicate ID:\n Controller ${id} already exists`,
+          `[Starry UseController] Duplicate ID: Controller ${id} already exists`,
         ),
       );
       return () => false;
@@ -52,7 +52,7 @@ export class GlobalRegistry {
     if (!this.globalRegistry.has(id)) {
       MessageWriter.error(
         new Error(
-          `[Starry UseController] ID Not Found:\n No Controller found with ID: ${id}`,
+          `[Starry UseController] ID Not Found: No Controller found with ID: ${id}`,
         ),
       );
       return null;
@@ -99,7 +99,7 @@ export function bindProject(
       //如果有set，就警告
       if (rawDescriptor?.set) {
         MessageWriter.warn(
-          `[Starry Project] Possible Implicit Modification:\n Manual Set on "${propertyKey}".` +
+          `[Starry Project] Possible Implicit Modification:\nManual Set on "${propertyKey}".` +
             `If this is not intentional, please do not use set.`,
         );
         setter = (val) => {
@@ -295,7 +295,7 @@ export function createDeepShield(
     deleteProperty(_obj, prop) {
       MessageWriter.error(
         new Error(
-          `[Starry DeepShield] Physical Protection:\n Prohibit Deletion of Component Attributes ${String(prop)}`,
+          `[Starry DeepShield] Physical Protection:\nProhibit Deletion of Component Attributes ${String(prop)}`,
         ),
       );
       return false;
@@ -305,7 +305,7 @@ export function createDeepShield(
     defineProperty() {
       MessageWriter.error(
         new Error(
-          `[Starry DeepShield] Physical Protection:\n Prohibit redefining component attribute structure`,
+          `[Starry DeepShield] Physical Protection:\nProhibit redefining component attribute structure`,
         ),
       );
       return false;
@@ -433,7 +433,7 @@ export function bindInherit(proto: any, instance: any) {
       set: () => {
         MessageWriter.error(
           new Error(
-            `[Starry Inherit] No Modification:\n Attempted to set read-only Inherit property: ${propertyKey}`,
+            `[Starry Inherit] No Modification:\nAttempted to set read-only Inherit property: ${propertyKey}`,
           ),
         );
       },

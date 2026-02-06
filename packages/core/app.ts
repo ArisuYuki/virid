@@ -2,7 +2,7 @@
  * @Author: ShirahaYuki  shirhayuki2002@gmail.com
  * @Date: 2026-02-05 19:45:29
  * @LastEditors: ShirahaYuki  shirhayuki2002@gmail.com
- * @LastEditTime: 2026-02-05 22:05:57
+ * @LastEditTime: 2026-02-06 11:26:53
  * @FilePath: /starry-project/packages/core/app.ts
  * @Description:app实例
  *
@@ -120,26 +120,53 @@ function withContext(
 }
 
 /**
+ * 简单的色彩辅助函数 (零依赖)
+ */
+const clr = {
+  reset: "\x1b[0m",
+  red: "\x1b[31m",
+  yellow: "\x1b[33m",
+  blue: "\x1b[34m",
+  magenta: "\x1b[35m",
+  cyan: "\x1b[36m",
+  gray: "\x1b[90m",
+  bold: "\x1b[1m",
+};
+
+/**
  * 注册全局默认错误处理系统
  */
 const globalErrorHandler = (err: ErrorMessage) => {
+  const header = `${clr.red}${clr.bold} ✖ [Starry Error] ${clr.reset}`;
+  const context = `${clr.magenta}${err.context}${clr.reset}`;
+
   console.error(
-    `[Starry Error] Global Error Caught:\n ${err.context}:`,
-    err.error,
+    `${header}${clr.gray}Global Error Caught:${clr.reset}\n` +
+      `  ${clr.red}Context:${clr.reset} ${context}\n` +
+      `  ${clr.red}Details:${clr.reset}`,
+    err.error || "Unknown Error",
   );
 };
+
 starryApp.register(
   ErrorMessage,
   withContext(ErrorMessage, globalErrorHandler, "GlobalErrorHandler"),
-  -999, // 错误处理通常优先级最低，作为保底
+  -999,
 );
 
 /**
  * 注册全局默认警告处理系统
  */
 const globalWarnHandler = (warn: WarnMessage) => {
-  console.warn(`[Starry Warn] Global Warn Caught: \n${warn.context}`, warn);
+  const header = `${clr.yellow}${clr.bold} ⚠ [Starry Warn] ${clr.reset}`;
+  const context = `${clr.cyan}${warn.context}${clr.reset}`;
+
+  console.warn(
+    `${header}${clr.gray}Global Warn Caught:${clr.reset}\n` +
+      `  ${clr.yellow}Context:${clr.reset} ${context}`,
+  );
 };
+
 starryApp.register(
   WarnMessage,
   withContext(WarnMessage, globalWarnHandler, "GlobalWarnHandler"),
@@ -165,12 +192,12 @@ const atomicModifyHandler = (modifications: AtomicModifyMessage<any>) => {
     modifications.recipe(rawComponent);
     // 记录显式的审计日志
     MessageWriter.warn(
-      `[Starry Modify] Successfully:\n [${modifications.label}] on ${modifications.ComponentClass.name}`,
+      `[Starry Modify] Successfully:\nModify on ${modifications.ComponentClass.name}\nlabel: ${modifications.label}`,
     );
   } catch (e) {
     MessageWriter.error(
       e as Error,
-      `[Starry Error] Modify Failed:\n ${modifications.label}`,
+      `[Starry Error] Modify Failed:\n${modifications.label}`,
     );
   }
 };

@@ -2,7 +2,7 @@
  * @Author: ShirahaYuki  shirhayuki2002@gmail.com
  * @Date: 2026-02-01 16:02:19
  * @LastEditors: ShirahaYuki  shirhayuki2002@gmail.com
- * @LastEditTime: 2026-02-05 21:17:32
+ * @LastEditTime: 2026-02-06 11:22:07
  * @FilePath: /starry-project/packages/core/message/dispatcher.ts
  * @Description:事件调度中心
  *
@@ -45,14 +45,14 @@ export class ExecutionTask {
             result.catch((e) =>
               MessageWriter.error(
                 e,
-                `[Starry Hook] Async Hook Error:\n ${hook.type.name}`,
+                `[Starry Hook] Async Hook Error:\n${hook.type.name}`,
               ),
             );
           }
         } catch (e) {
           MessageWriter.error(
             e as Error,
-            `[Starry Hook] Hook Execute Failed:\n Triggered by: ${sample.constructor.name}\n Registered type: ${hook.type.name}`,
+            `[Starry Hook] Hook Execute Failed:\nTriggered by: ${sample.constructor.name}\n Registered type: ${hook.type.name}`,
           );
         }
       }
@@ -150,7 +150,7 @@ export class Dispatcher {
       this.eventQueue = [];
       this.eventHub.reset();
       MessageWriter.error(
-        new Error("[Starry Dispatcher] Deadlock:\n Recursive loop detected."),
+        new Error("[Starry Dispatcher] Deadlock: Recursive loop detected."),
       );
       return;
     }
@@ -216,7 +216,7 @@ export class Dispatcher {
               result.catch((e) =>
                 MessageWriter.error(
                   e,
-                  `[Starry Dispatcher] Async Error:\n targetClass:${task.context.targetClass}\n methodName:${task.context.methodName}
+                  `[Starry Dispatcher] Async Error:\ntargetClass:${task.context.targetClass}\nmethodName:${task.context.methodName}
                 `,
                 ),
               );
@@ -224,7 +224,7 @@ export class Dispatcher {
           } catch (e) {
             MessageWriter.error(
               e as Error,
-              `[Starry Dispatcher] Sync Error:\n targetClass:${task.context.targetClass}\n methodName:${task.context.methodName}
+              `[Starry Dispatcher] Sync Error:\ntargetClass:${task.context.targetClass}\nmethodName:${task.context.methodName}
                 `,
             );
           }

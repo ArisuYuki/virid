@@ -2,7 +2,7 @@
  * @Author: ShirahaYuki  shirhayuki2002@gmail.com
  * @Date: 2026-01-31 16:17:36
  * @LastEditors: ShirahaYuki  shirhayuki2002@gmail.com
- * @LastEditTime: 2026-02-05 21:26:37
+ * @LastEditTime: 2026-02-06 12:52:08
  * @FilePath: /starry-project/packages/core/decorators/ccs.ts
  * @Description: ccs核心魔法装饰器
  *
@@ -26,12 +26,19 @@ export function System(priority: number = 0) {
   return (target: any, key: string, descriptor: PropertyDescriptor) => {
     const originalMethod = descriptor.value;
     const types = Reflect.getMetadata("design:paramtypes", target, key) || [];
+    if (types.length === 0) {
+      MessageWriter.error(
+        new Error(
+          `[Starry System] System Parameter Loss:\nUnable to recognize system parameters, please confirm if import "reflection-metadata" was introduced at the beginning!`,
+        ),
+      );
+    }
     const readerConfigs: { index: number; eventClass: any; single: boolean }[] =
       Reflect.getMetadata(STARRY_METADATA.MESSAGE, target, key) || [];
     //不允许有多个Configs,只能由一种Message触发
     if (readerConfigs.length > 1) {
       MessageWriter.warn(
-        `[Starry System] Multiple Messages Are Not Allowed:\n ${key} has multiple @Message() decorators!`,
+        `[Starry System] Multiple Messages Are Not Allowed: ${key} has multiple @Message() decorators!`,
       );
       return;
     }
@@ -49,7 +56,7 @@ export function System(priority: number = 0) {
             // 如果类型不匹配，说明 Dispatcher 路由逻辑或元数据配置有问题
             MessageWriter.error(
               new Error(
-                `[Starry System] Type Mismatch:\n Expected ${eventClass.name}, but received ${sample?.constructor.name}`,
+                `[Starry System] Type Mismatch: Expected ${eventClass.name}, but received ${sample?.constructor.name}`,
               ),
             );
             return null;
@@ -83,7 +90,7 @@ export function System(priority: number = 0) {
         if (!param)
           MessageWriter.error(
             new Error(
-              `[Starry System] Unkonw Inject Data Types:\n ${type.name} is not registered in the container!`,
+              `[Starry System] Unknown Inject Data Types: ${type.name} is not registered in the container!`,
             ),
           );
         return param;

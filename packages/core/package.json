@@ -1,16 +1,52 @@
 {
   "name": "@starry/core",
   "version": "0.0.1",
+  "description": "A lightweight and powerful message core built using dependency injection and ECS concepts",
+  "author": "ShirahaYuki",
+  "license": "MIT",
+  "keywords": [
+    "ioc",
+    "di",
+    "core",
+    "starry",
+    "message",
+    "ecs"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ArisuYuki/starry.git"
+  },
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
-    "build": "tsup index.ts --format esm,cjs --dts --clean --external reflect-metadata --external inversify"
+    "build": "tsup index.ts --format esm,cjs --dts --clean --external reflect-metadata --external inversify",
+    "example": "npm run build && node --import @swc-node/register/esm-register examples/index.ts"
   },
   "dependencies": {
     "inversify": "^7.11.0"
   },
   "peerDependencies": {
     "reflect-metadata": "^0.2.2"
+  },
+  "devDependencies": {
+    "@swc-node/register": "^1.10.9",
+    "@swc/core": "^1.15.11",
+    "reflect-metadata": "^0.2.2",
+    "tsup": "^8.5.1",
+    "typescript": "^5.0.0"
   }
 }

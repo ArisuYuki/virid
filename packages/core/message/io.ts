@@ -2,7 +2,7 @@
  * @Author: ShirahaYuki  shirhayuki2002@gmail.com
  * @Date: 2026-02-03 09:59:36
  * @LastEditors: ShirahaYuki  shirhayuki2002@gmail.com
- * @LastEditTime: 2026-02-05 22:14:55
+ * @LastEditTime: 2026-02-06 11:23:44
  * @FilePath: /starry-project/packages/core/message/io.ts
  * @Description:  消息读写器
  *

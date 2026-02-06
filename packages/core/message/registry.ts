@@ -2,7 +2,7 @@
  * @Author: ShirahaYuki  shirhayuki2002@gmail.com
  * @Date: 2026-02-03 10:00:24
  * @LastEditors: ShirahaYuki  shirhayuki2002@gmail.com
- * @LastEditTime: 2026-02-05 19:34:43
+ * @LastEditTime: 2026-02-06 11:23:57
  * @FilePath: /starry-project/packages/core/message/registry.ts
  * @Description:给消息的注册器，收集所有的system函数
  *
@@ -38,7 +38,7 @@ export class MessageRegistry {
       const funcName = systemFn.name || "Anonymous";
       MessageWriter.error(
         new Error(
-          `[Starry Error] System Already Registered: Class ${eventClass.name} , Function ${funcName}`,
+          `[Starry Error] System Already Registered:\nClass ${eventClass.name}\nFunction ${funcName}`,
         ),
       );
       return () => {};

@@ -2,13 +2,14 @@
  * @Author: ShirahaYuki  shirhayuki2002@gmail.com
  * @Date: 2026-02-03 09:57:20
  * @LastEditors: ShirahaYuki  shirhayuki2002@gmail.com
- * @LastEditTime: 2026-02-05 23:20:33
+ * @LastEditTime: 2026-02-06 10:51:14
  * @FilePath: /starry-project/packages/core/message/types.ts
  * @Description:  消息类型定义
  *
  * Copyright (c) 2026 by ShirahaYuki, All Rights Reserved.
  */
 
+import { Newable } from "inversify";
 import { MessageWriter } from "./io";
 type AnyConstructor = abstract new (...args: any[]) => any;
 export abstract class BaseMessage {
@@ -29,25 +30,25 @@ export abstract class BaseMessage {
   constructor() {
     // 仅在开发模式下开启，避免生产环境性能损耗
     // @ts-ignore
-    if (process.env.NODE_ENV === "development") {
-      this.senderInfo = this.captureSender();
-    }
+    // if (process.env.NODE_ENV === "development") {
+    //   this.senderInfo = this.captureSender();
+    // }
   }
-  protected captureSender() {
-    const stack = new Error().stack?.split("\n");
-    // stack[0] 是 Error 本身
-    // stack[1] 是 captureSender
-    // stack[2] 是 BaseMessage 的构造函数
-    // stack[3] 通常就是调用 MessageWriter.write 的地方
-    const callerLine = stack?.[3] || "";
-    // 用正则提取出 文件名:行号
-    const match = callerLine.match(/\((.*):(\d+):(\d+)\)/);
-    return {
-      fileName: match ? match[1].split("/").pop()! : "unknown",
-      line: match ? parseInt(match[2]) : 0,
-      timestamp: Date.now(),
-    };
-  }
+  // protected captureSender() {
+  //   const stack = new Error().stack?.split("\n");
+  //   // stack[0] 是 Error 本身
+  //   // stack[1] 是 captureSender
+  //   // stack[2] 是 BaseMessage 的构造函数
+  //   // stack[3] 通常就是调用 MessageWriter.write 的地方
+  //   const callerLine = stack?.[3] || "";
+  //   // 用正则提取出 文件名:行号
+  //   const match = callerLine.match(/\((.*):(\d+):(\d+)\)/);
+  //   return {
+  //     fileName: match ? match[1].split("/").pop()! : "unknown",
+  //     line: match ? parseInt(match[2]) : 0,
+  //     timestamp: Date.now(),
+  //   };
+  // }
 }
 /**
  * 可合并的信号基类
@@ -96,7 +97,7 @@ export class WarnMessage extends EventMessage {
  */
 export class AtomicModifyMessage<T> extends EventMessage {
   constructor(
-    public readonly ComponentClass: new (...args: any[]) => T, // 你要改哪个组件？
+    public readonly ComponentClass: Newable<T>, // 你要改哪个组件？
     public readonly recipe: (comp: T) => void, // 你打算怎么改？
     public readonly label: string, // 为什么要改？
   ) {
