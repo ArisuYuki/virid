@@ -1,12 +1,38 @@
 # 🛰️ @virid/core
 
-[中文说明](file://.README.zh.md)
+
 
 > **A Lightweight, Message-Driven Logic Engine inspired by Rust's ECS Architecture and Nestjs.**
 
+[中文说明](README.zh.md)
+
 ## ✨ Features
 
-## 🛠️ Decoupling of Logic Sovereignty
+
+
+### 🧩 What is CCS Architecture?
+
+`virid` is built on the **CCS (Component-Controller-System)** architecture. Based on the traditional ECS (Entity-Component-System) pattern, it introduces a "Controller" layer specifically for Web/UI environments to bridge logic and views seamlessly.
+
+#### 1. 💾 Component (Data) — "The Container of Truth"
+
+- **Definition**: Pure data structures containing zero business logic.
+- **Responsibility**: Stores state (e.g., `PlaylistComponent` storing song lists and playback status). In `virid`, Components are managed as **Singletons** within the IoC container.
+
+#### 2. 🎮 Controller (The Bridge) — "The Anchor of Views"
+
+- **Definition**: A proxy layer between the UI framework (Vue) and the core logic (Core).
+- **Responsibility**:
+  - **Projection**: Safely maps data from `Components` to Vue using `@Project`.
+  - **Command**: Captures UI events (like clicks) and transforms them into `Messages` to be dispatched to the engine.
+  - **Context Awareness**: Perceives UI hierarchy and metadata (like list indices) via `@Env`.
+
+#### 3. ⚙️ System (Logic) — "The Arbiter of Causality"
+
+- **Definition**: A collection of stateless static methods and the **only** legitimate place for state transitions.
+- **Responsibility**: Listens for `Messages` and modifies `Component` data accordingly. Systems are **deterministic**, ensuring that the same input always yields the same state transition.
+
+### 🛠️ Decoupling of Logic Sovereignty
 
 ### 1. Total UI Demotion: Framework-Agnostic Core
 
@@ -69,7 +95,7 @@ import {
 } from "@virid/core";
 
 // Initialize the core engine
-const app = createvirid();
+const app = createVirid();
 
 // Define Data Entity (Component)
 @Component()

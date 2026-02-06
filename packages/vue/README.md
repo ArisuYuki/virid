@@ -1,7 +1,7 @@
 # 🛰️ @virid/vue
 
-[中文说明](file://.README.zh.md)
-
+[中文说明](README.zh.md)
+---
 **The Bridge between virid Core and Vue.**
 
 **_Turning Vue into the most elegant "State Projectionist" for the virid Engine._**

@@ -1,6 +1,7 @@
 # 🌌 virid
 
-[中文说明](file://.README.zh.md)
+[中文说明](README.zh.md)
+---
 **The Sovereign Logic Engine & Reactive Projection System**
 
 **Deconstructing UI Sovereignty, Reshaping Logic Boundaries.**
@@ -40,5 +41,5 @@ In the world of `virid`, business logic is the "first-class citizen," while the 
 
 For implementation details and quick-start examples, please refer to the sub-package documentation:
 
-- 👉 **[@virid/core](file://.packages/core/README.md)** – Learn about the CCS architecture, message scheduling, and state management.
-- 👉 **[@virid/vue](file://.packages/vue/README.md)** – Learn how to project logic onto the Vue view layer.
+- 👉 **[@virid/core](packages/core/README.md)** – Learn about the CCS architecture, message scheduling, and state management.
+- 👉 **[@virid/vue](packages/vue/README.md)** – Learn how to project logic onto the Vue view layer.
