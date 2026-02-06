@@ -37,7 +37,19 @@ class CounterSystem {
     @Message(IncrementMessage) message: IncrementMessage,
     count: CounterComponent,
   ) {
-    console.log("---------------------System----------------------");
+    console.log("---------------------onIncrement----------------------");
+    console.log("message :>> ", message);
+    count.count += message.amount;
+  }
+  // single = true (default): Process each message one by one
+  @System(100)
+  static onIncrementPriority(
+    @Message(IncrementMessage) message: IncrementMessage,
+    count: CounterComponent,
+  ) {
+    console.log(
+      "---------------------onIncrementPriority----------------------",
+    );
     console.log("message :>> ", message);
     count.count += message.amount;
   }
