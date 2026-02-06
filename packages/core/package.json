@@ -1,5 +1,5 @@
 {
-  "name": "@starry/core",
+  "name": "@virid/core",
   "version": "0.0.1",
   "description": "A lightweight and powerful message core built using dependency injection and ECS concepts",
   "author": "ShirahaYuki",
@@ -8,13 +8,13 @@
     "ioc",
     "di",
     "core",
-    "starry",
+    "virid",
     "message",
     "ecs"
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ArisuYuki/starry.git"
+    "url": "git+https://github.com/ArisuYuki/virid.git"
   },
   "main": "dist/index.js",
   "module": "dist/index.mjs",

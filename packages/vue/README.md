@@ -1,28 +1,29 @@
-# 🛰️ @starry/vue
+# 🛰️ @virid/vue
+
 [中文说明](file://.README.zh.md)
 
-**The Bridge between Starry Core and Vue.** 
+**The Bridge between virid Core and Vue.**
 
-***Turning Vue into the most elegant "State Projectionist" for the Starry Engine.***
+**_Turning Vue into the most elegant "State Projectionist" for the virid Engine._**
 
-------
+---
 
 ## 🧩 Positioning: Governing View Projections
 
-`@starry/vue` is by no means just another state management plugin. On the contrary, in the Starry worldview: **Vue itself is a plugin for Starry.**
+`@virid/vue` is by no means just another state management plugin. On the contrary, in the virid worldview: **Vue itself is a plugin for virid.**
 
 #### **Core Philosophy: Architectural Sovereignty**
 
-The traditional paradigm is "Writing business logic inside Vue"; in Starry, **business logic is immortal within the Core**, while Vue is merely a transient projection of that logic onto the browser DOM.
+The traditional paradigm is "Writing business logic inside Vue"; in virid, **business logic is immortal within the Core**, while Vue is merely a transient projection of that logic onto the browser DOM.
 
 - **Logic Sovereignty**: All causality (**Messages**), rule sets (**Systems**), and data sources (**Components**) operate independently of Vue.
 - **View Terminal**: Vue surrenders its authority to mutate state. It is demoted to an intelligent terminal, responsible only for rendering projections and triggering instructions.
 
-------
+---
 
 ### 🛡️ How it Empowers the Core
 
-If the Core is the brain, `@starry/vue` provides the neurons. It grants the Core the privilege to bridge the chasm between "Logic" and "View":
+If the Core is the brain, `@virid/vue` provides the neurons. It grants the Core the privilege to bridge the chasm between "Logic" and "View":
 
 #### **1. Data Manifestation: Reactive Projection**
 
@@ -43,9 +44,9 @@ The Core is singleton and flat; the UI is tree-like and volatile.
 Vue’s native lifecycles and events can often become chaotic.
 
 - **Enhancement**: The adapter introduces `@Listener` and `@OnHook`. It ensures UI actions (e.g., clicks, mounting) no longer execute business logic directly but are instead converted into a **ControllerMessage**.
-- **Behavior**: Every UI behavior is standardized as a "Message." The Core acts as an arbiter, judging these messages through **Systems**. This guarantees that even in a Vue environment, every line of logic must pass through the Starry Dispatcher's priority queue.
+- **Behavior**: Every UI behavior is standardized as a "Message." The Core acts as an arbiter, judging these messages through **Systems**. This guarantees that even in a Vue environment, every line of logic must pass through the virid Dispatcher's priority queue.
 
-## 🚀 Quick Start: Starry in Action
+## 🚀 Quick Start: virid in Action
 
 In this example, we will implement a classic scenario: **Click a song from a list, send a command through the Controller, and let the System determine the playback logic.**
 
@@ -55,13 +56,13 @@ First, define your data structure in the Core. No need to worry about Vue here.
 
 ```typescript
 // PlayerComponent.ts
-import { Component } from '@starry/core'
-import { Responsive } from '@starry/vue'
+import { Component } from "@virid/core";
+import { Responsive } from "@virid/vue";
 
 @Component()
 export class PlaylistComponent {
   @Responsive() // Make Core data perceptible to Vue
-  public currentSongName: string = 'Not Playing'
+  public currentSongName: string = "Not Playing";
 }
 ```
 
@@ -71,10 +72,12 @@ Define what the user intends to do.
 
 ```typescript
 // logic/messages.ts
-import { SingleMessage } from '@starry/core'
+import { SingleMessage } from "@virid/core";
 
 export class PlaySongMessage extends SingleMessage {
-  constructor(public songName: string) { super() }
+  constructor(public songName: string) {
+    super();
+  }
 }
 ```
 
@@ -84,44 +87,47 @@ Write business logic in the Core. It acts as the absolute arbiter.
 
 ```typescript
 // PlayerSystem.ts
-import { System, Message } from '@starry/core'
-import { PlaySongMessage } from '../messages'
-import { PlaylistComponent } from '../components/PlayerComponent'
+import { System, Message } from "@virid/core";
+import { PlaySongMessage } from "../messages";
+import { PlaylistComponent } from "../components/PlayerComponent";
 
 export class PlayerSystem {
   @System()
-  static onPlay(@Message(PlaySongMessage) msg: PlaySongMessage, state: PlaylistComponent) {
+  static onPlay(
+    @Message(PlaySongMessage) msg: PlaySongMessage,
+    state: PlaylistComponent,
+  ) {
     // All logic loops are closed here: Mutate data
-    state.currentSongName = msg.songName
-    console.log(`Core is now playing: ${msg.songName}`)
+    state.currentSongName = msg.songName;
+    console.log(`Core is now playing: ${msg.songName}`);
   }
 }
 ```
 
 ### 4. Bridge the View (Controller & Vue)
 
-This is where `@starry/vue` performs its magic, "projecting" logic onto Vue.
+This is where `@virid/vue` performs its magic, "projecting" logic onto Vue.
 
 **Controller (Logic Adapter):**
 
 ```typescript
 // logic/controllers/SongController.ts
-import { Controller } from '@starry/core'
-import { Project, Responsive } from '@starry/vue'
-import { PlaylistComponent } from '../components/PlayerComponent'
-import { PlaySongMessage } from '../messages'
+import { Controller } from "@virid/core";
+import { Project, Responsive } from "@virid/vue";
+import { PlaylistComponent } from "../components/PlayerComponent";
+import { PlaySongMessage } from "../messages";
 
 @Controller()
 export class SongController {
   @Project(PlaylistComponent, (c) => c.currentSongName)
-  public playing!: string // Projection: Read-only mirror of Core data
+  public playing!: string; // Projection: Read-only mirror of Core data
 
   // Define local UI state
-  @Responsive() 
-  public list = ['think of you', 'ROCK IN!', 'Instant Love']
-  
+  @Responsive()
+  public list = ["think of you", "ROCK IN!", "Instant Love"];
+
   play(name: string) {
-    PlaySongMessage.send(name) // Send instruction instead of mutating data directly
+    PlaySongMessage.send(name); // Send instruction instead of mutating data directly
   }
 }
 ```
@@ -141,16 +147,15 @@ export class SongController {
 </template>
 
 <script setup lang="ts">
-import { useController } from '@starry/vue'
-import { SongController } from './logic/controllers/SongController'
+  import { useController } from "@virid/vue";
+  import { SongController } from "./logic/controllers/SongController";
 
-// All the magic happens here: bind the Controller to the Vue lifecycle
-const ctrl = useController(SongController)
+  // All the magic happens here: bind the Controller to the Vue lifecycle
+  const ctrl = useController(SongController);
 </script>
-
 ```
 
-## 📘 Starry Core Concepts: The "Layman's Legend" Edition
+## 📘 virid Core Concepts: The "Layman's Legend" Edition
 
 ### 1. `@Project` —— The One-Way Lens (The Projector)
 
@@ -166,9 +171,9 @@ const ctrl = useController(SongController)
 
 ### 3. `useController` —— The Logical Anchor (The Tether)
 
-- **Plain English**: Dropping an anchor into the Vue ocean to tether a "Logic Beast" from the Starry Core.
+- **Plain English**: Dropping an anchor into the Vue ocean to tether a "Logic Beast" from the virid Core.
 - **What it does**: The Vue component says, "I only care about styling, not business logic." It hires a representative (the Controller) through `useController`. This proxy is retrieved from the **IoC Container**, appearing when the component mounts and vanishing when it unmounts.
-- **The Law**: This is the **only official gateway** between the Vue world and the Starry Core world.
+- **The Law**: This is the **only official gateway** between the Vue world and the virid Core world.
 
 ### 4. `Message.send` —— Activating Causality (The Formal Petition)
 
@@ -212,11 +217,9 @@ const ctrl = useController(SongController)
 
 - **What it does**: Use `@OnHook('onSetup')` to fetch the initial playlist from a server as soon as the Controller is initialized.
 
-- **The Law**: It ensures that while your Controller "lives" in the Starry Core philosophy, it dances perfectly to the rhythm of the Vue stage.
+- **The Law**: It ensures that while your Controller "lives" in the virid Core philosophy, it dances perfectly to the rhythm of the Vue stage.
 
-------
-
-
+---
 
 ## ⚡ The Chain of Causality
 
@@ -227,7 +230,7 @@ const ctrl = useController(SongController)
 5. **Data Projection**: Because the data is marked `@Responsive` and the Controller is marked `@Project`, the shadow variable `playing` updates automatically.
 6. **UI Vibration**: Vue detects the change, re-renders the interface, and the user sees the "Now Playing" status update.
 
-------
+---
 
 ## 💡 Why Is This More Elegant?
 
@@ -245,28 +248,28 @@ graph TD
     end
 
     %% 适配层：装饰器魔法与消息路由
-    subgraph Adapter ["Starry Vue Adapter"]
+    subgraph Adapter ["virid Vue Adapter"]
         direction TB
         SC -->|"SongControllerMessage.send(this.index)"| SCM["SongControllerMessage (Local)"]
-        
+
         %% 核心拦截逻辑
         SCM -->|"@Listener"| PC[PlaylistController]
-        
+
         subgraph Magic ["Logic Decoration"]
             SC -- "@Env" --> E["index (From Context)"]
             SC -- "@Inherit" --> I["playlist (From PC)"]
             SC -- "@Project" --> P["song (Computed by index)"]
         end
-        
+
         PC -->|"PlaySongMesage.send(song)"| PSM["PlaySongMesage (Global Domain)"]
     end
 
     %% 核心引擎：确定性处理
-    subgraph Core ["Starry Core Engine"]
+    subgraph Core ["virid Core Engine"]
         direction TB
         PSM --> Hub["EventHub (Queueing)"]
         Hub -->|"Tick / Buffer Flip"| Active["Active Pool"]
-        
+
         subgraph Execution ["System Execution"]
             Active --> Sys["Player.playThisSong (Static)"]
             DI[("(Inversify Container)")] -.->|Inject| PLC["PlaylistComponent"]

@@ -1,7 +1,7 @@
 //'reflect-metadata' must be imported to work
 import "reflect-metadata";
 import {
-  createStarry,
+  createVirid,
   Component,
   System,
   Message,
@@ -15,7 +15,7 @@ class IncrementMessage extends SingleMessage {
   }
 }
 // Initialize the core engine
-const app = createStarry();
+const app = createVirid();
 // Add execution hook
 app.onBeforeExecute(IncrementMessage, (message, context) => {
   console.log("----------------onBeforeExecute------------------");
@@ -57,7 +57,7 @@ app.bindComponent(CounterComponent);
 
 // Business logic automatically completes scheduling in the next microtask
 queueMicrotask(() => {
-  // Starry will batch messages sent in the same microtask
+  // virid will batch messages sent in the same microtask
   // These two messages will be processed in a single 'Tick'
   IncrementMessage.send(1);
   IncrementMessage.send(5);

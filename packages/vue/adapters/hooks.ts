@@ -3,7 +3,7 @@
  * @Date: 2026-01-31 16:01:12
  * @LastEditors: ShirahaYuki  shirhayuki2002@gmail.com
  * @LastEditTime: 2026-02-05 23:23:43
- * @FilePath: /starry-project/packages/vue/adapters/hooks.ts
+ * @FilePath: /virid-project/packages/vue/adapters/hooks.ts
  * @Description:vue hooks 适配器，用于挂载各种vue魔法装饰器
  *
  * Copyright (c) 2026 by ShirahaYuki, All Rights Reserved.
@@ -20,10 +20,9 @@ import {
   bindInherit,
 } from "./bind";
 import { onUnmounted, useAttrs } from "vue";
-import { STARRY_METADATA } from "../decorators/constants";
-import { MessageWriter } from "@starry/core";
-import "reflect-metadata";
-import { starryApp } from "../app";
+import { virid_METADATA } from "../decorators/constants";
+import { MessageWriter } from "@virid/core";
+import { viridApp } from "../app";
 /**
  * @description: vue的hooks适配器，注入IOC容器中的Controller实例，并挂在vue的各种方法
  * @param token
@@ -33,7 +32,7 @@ export function useController<T>(
   token: new (...args: any[]) => T,
   options?: { id?: string; context?: any },
 ): T {
-  const instance = starryApp.get(token) as any;
+  const instance = viridApp.get(token) as any;
   // 处理@Responsive，将属性变成响应式的
   bindResponsive(instance);
 
@@ -44,14 +43,14 @@ export function useController<T>(
   }
 
   // 检查身份 Controller
-  const isController = Reflect.hasMetadata(STARRY_METADATA.CONTROLLER, token);
+  const isController = Reflect.hasMetadata(virid_METADATA.CONTROLLER, token);
   // 建立真身仓库 (此时 instance 里的 service 还是干净的原始对象)
   const rawDeps: Record<string, any> = {};
   if (isController) {
     Object.keys(instance).forEach((key) => {
       const dep = (instance as any)[key];
       if (dep && typeof dep === "object" && dep.constructor) {
-        if (Reflect.hasMetadata(STARRY_METADATA.COMPONENT, dep.constructor)) {
+        if (Reflect.hasMetadata(virid_METADATA.COMPONENT, dep.constructor)) {
           rawDeps[key] = dep; // 存下真身
         }
       }
@@ -118,10 +117,10 @@ function injectContext(context: any, instance: any) {
             // 尝试直接修改源数据（支持某些 slot props 的双向绑定）
             context[key] = val;
           } catch (e) {
-            // console.error(`[Starry] 属性 "${key}" 是环境受限的，无法在逻辑层直接修改。`)
+            // console.error(`[Virid] 属性 "${key}" 是环境受限的，无法在逻辑层直接修改。`)
             MessageWriter.error(
               e as Error,
-              `[Starry Context] Set Failed:\n "${key}" is only readable.`,
+              `[Virid Context] Set Failed:\n "${key}" is only readable.`,
             );
           }
         },

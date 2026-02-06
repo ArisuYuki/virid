@@ -3,7 +3,7 @@
  * @Date: 2026-02-01 15:32:13
  * @LastEditors: ShirahaYuki  shirhayuki2002@gmail.com
  * @LastEditTime: 2026-02-05 21:33:51
- * @FilePath: /starry-project/packages/core/message/index.ts
+ * @FilePath: /virid-project/packages/core/message/index.ts
  * @Description:
  *
  * Copyright (c) 2026 by ShirahaYuki, All Rights Reserved.

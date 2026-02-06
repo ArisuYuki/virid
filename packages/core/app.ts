@@ -2,7 +2,7 @@
  * @Author: ShirahaYuki  shirhayuki2002@gmail.com
  * @Date: 2026-02-05 19:45:29
  * @LastEditors: ShirahaYuki  shirhayuki2002@gmail.com
- * @LastEditTime: 2026-02-06 11:26:53
+ * @LastEditTime: 2026-02-06 14:17:57
  * @FilePath: /starry-project/packages/core/app.ts
  * @Description:app实例
  *
@@ -26,15 +26,15 @@ import {
   Middleware,
   WarnMessage,
 } from "./message";
-import { StarryPlugin } from "./types";
+import { type ViridPlugin } from "./types";
 
 // 维护一个已安装插件的列表，防止重复安装
 const installedPlugins = new Set<string>();
 /**
- * 创建 Starry 核心实例
+ * 创建 virid 核心实例
  */
 
-export class StarryApp {
+export class ViridApp {
   public container: Container = new Container();
   private messageInternal: MessageInternal = new MessageInternal();
   private bindBase<T>(identifier: new (...args: any[]) => T) {
@@ -80,10 +80,10 @@ export class StarryApp {
       priority,
     );
   }
-  use(plugin: StarryPlugin, options: any) {
+  use(plugin: ViridPlugin, options: any) {
     if (installedPlugins.has(plugin.name)) {
       MessageWriter.warn(
-        `[Starry Plugin] Plugin ${plugin.name} has already been installed.`,
+        `[Virid Plugin] Plugin ${plugin.name} has already been installed.`,
       );
       return this;
     }
@@ -91,13 +91,13 @@ export class StarryApp {
       plugin.install(this, options);
       installedPlugins.add(plugin.name);
     } catch (e) {
-      MessageWriter.error(e as Error, `[Starry Plugin] ${plugin.name}`);
+      MessageWriter.error(e as Error, `[Virid Plugin] ${plugin.name}`);
     }
     return this;
   }
 }
 
-export const starryApp = new StarryApp();
+export const viridApp = new ViridApp();
 
 //---------------------------------------------注册几个默认的处理函数---------------------------------------
 
@@ -137,7 +137,7 @@ const clr = {
  * 注册全局默认错误处理系统
  */
 const globalErrorHandler = (err: ErrorMessage) => {
-  const header = `${clr.red}${clr.bold} ✖ [Starry Error] ${clr.reset}`;
+  const header = `${clr.red}${clr.bold} ✖ [Virid Error] ${clr.reset}`;
   const context = `${clr.magenta}${err.context}${clr.reset}`;
 
   console.error(
@@ -148,7 +148,7 @@ const globalErrorHandler = (err: ErrorMessage) => {
   );
 };
 
-starryApp.register(
+viridApp.register(
   ErrorMessage,
   withContext(ErrorMessage, globalErrorHandler, "GlobalErrorHandler"),
   -999,
@@ -158,7 +158,7 @@ starryApp.register(
  * 注册全局默认警告处理系统
  */
 const globalWarnHandler = (warn: WarnMessage) => {
-  const header = `${clr.yellow}${clr.bold} ⚠ [Starry Warn] ${clr.reset}`;
+  const header = `${clr.yellow}${clr.bold} ⚠ [Virid Warn] ${clr.reset}`;
   const context = `${clr.cyan}${warn.context}${clr.reset}`;
 
   console.warn(
@@ -167,7 +167,7 @@ const globalWarnHandler = (warn: WarnMessage) => {
   );
 };
 
-starryApp.register(
+viridApp.register(
   WarnMessage,
   withContext(WarnMessage, globalWarnHandler, "GlobalWarnHandler"),
   -999,
@@ -179,11 +179,11 @@ starryApp.register(
  */
 const atomicModifyHandler = (modifications: AtomicModifyMessage<any>) => {
   // 从 Registry 拿到未经 Proxy 劫持的原始对象 (Raw)
-  const rawComponent = starryApp.container.get(modifications.ComponentClass);
+  const rawComponent = viridApp.container.get(modifications.ComponentClass);
 
   if (!rawComponent) {
     console.error(
-      `[Starry Modify] Component Not Found:\n Component ${modifications.ComponentClass.name} not found in Registry.`,
+      `[Virid Modify] Component Not Found:\n Component ${modifications.ComponentClass.name} not found in Registry.`,
     );
     return;
   }
@@ -192,17 +192,17 @@ const atomicModifyHandler = (modifications: AtomicModifyMessage<any>) => {
     modifications.recipe(rawComponent);
     // 记录显式的审计日志
     MessageWriter.warn(
-      `[Starry Modify] Successfully:\nModify on ${modifications.ComponentClass.name}\nlabel: ${modifications.label}`,
+      `[Virid Modify] Successfully:\nModify on ${modifications.ComponentClass.name}\nlabel: ${modifications.label}`,
     );
   } catch (e) {
     MessageWriter.error(
       e as Error,
-      `[Starry Error] Modify Failed:\n${modifications.label}`,
+      `[Virid Error] Modify Failed:\n${modifications.label}`,
     );
   }
 };
 
-starryApp.register(
+viridApp.register(
   AtomicModifyMessage,
   withContext(
     AtomicModifyMessage<any>,

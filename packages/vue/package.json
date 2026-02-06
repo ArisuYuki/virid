@@ -1,7 +1,7 @@
 {
-  "name": "@starry/vue",
+  "name": "@virid/vue",
   "version": "0.0.1",
-  "description": "Vue adapter for Starry, projecting logic sovereignty to reactive UI",
+  "description": "Vue adapter for virid, projecting logic sovereignty to reactive UI",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -20,7 +20,7 @@
     "dist"
   ],
   "dependencies": {
-    "@starry/core": "workspace:*"
+    "@virid/core": "workspace:*"
   },
   "peerDependencies": {
     "vue": "^3.0.0",
@@ -32,6 +32,6 @@
     }
   },
   "scripts": {
-    "build": "tsup index.ts --format esm,cjs --dts --clean --external vue --external @starry/core --external reflect-metadata --external inversify"
+    "build": "tsup index.ts --format esm,cjs --dts --clean --external vue --external @virid/core --external reflect-metadata --external inversify"
   }
 }

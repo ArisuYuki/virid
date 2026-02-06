@@ -2,15 +2,15 @@
  * @Author: ShirahaYuki  shirhayuki2002@gmail.com
  * @Date: 2026-01-31 16:17:36
  * @LastEditors: ShirahaYuki  shirhayuki2002@gmail.com
- * @LastEditTime: 2026-02-06 12:52:08
+ * @LastEditTime: 2026-02-06 14:18:34
  * @FilePath: /starry-project/packages/core/decorators/ccs.ts
  * @Description: ccs核心魔法装饰器
  *
  * Copyright (c) 2026 by ShirahaYuki, All Rights Reserved.
  */
-import { starryApp } from "../app";
+import { viridApp } from "../app";
 import { BaseMessage, MessageWriter } from "../message";
-import { STARRY_METADATA } from "./constants";
+import { virid_METADATA } from "./constants";
 import { injectable } from "inversify";
 import {
   CCSSystemContext,
@@ -29,16 +29,16 @@ export function System(priority: number = 0) {
     if (types.length === 0) {
       MessageWriter.error(
         new Error(
-          `[Starry System] System Parameter Loss:\nUnable to recognize system parameters, please confirm if import "reflection-metadata" was introduced at the beginning!`,
+          `[Virid System] System Parameter Loss:\nUnable to recognize system parameters, please confirm if import "reflection-metadata" was introduced at the beginning!`,
         ),
       );
     }
     const readerConfigs: { index: number; eventClass: any; single: boolean }[] =
-      Reflect.getMetadata(STARRY_METADATA.MESSAGE, target, key) || [];
+      Reflect.getMetadata(virid_METADATA.MESSAGE, target, key) || [];
     //不允许有多个Configs,只能由一种Message触发
     if (readerConfigs.length > 1) {
       MessageWriter.warn(
-        `[Starry System] Multiple Messages Are Not Allowed: ${key} has multiple @Message() decorators!`,
+        `[Virid System] Multiple Messages Are Not Allowed: ${key} has multiple @Message() decorators!`,
       );
       return;
     }
@@ -56,7 +56,7 @@ export function System(priority: number = 0) {
             // 如果类型不匹配，说明 Dispatcher 路由逻辑或元数据配置有问题
             MessageWriter.error(
               new Error(
-                `[Starry System] Type Mismatch: Expected ${eventClass.name}, but received ${sample?.constructor.name}`,
+                `[Virid System] Type Mismatch: Expected ${eventClass.name}, but received ${sample?.constructor.name}`,
               ),
             );
             return null;
@@ -86,11 +86,11 @@ export function System(priority: number = 0) {
           return currentMessage;
         }
         // 处理普通的依赖注入
-        const param = starryApp.get(type);
+        const param = viridApp.get(type);
         if (!param)
           MessageWriter.error(
             new Error(
-              `[Starry System] Unknown Inject Data Types: ${type.name} is not registered in the container!`,
+              `[Virid System] Unknown Inject Data Types: ${type.name} is not registered in the container!`,
             ),
           );
         return param;
@@ -126,7 +126,7 @@ export function System(priority: number = 0) {
     descriptor.value = wrappedSystem;
     // 注册到调度中心：每个监听的消息类都要关联这个包装函数
     readerConfigs.forEach((config: any) => {
-      starryApp.register(config.eventClass, wrappedSystem, priority);
+      viridApp.register(config.eventClass, wrappedSystem, priority);
     });
   };
 }
@@ -140,10 +140,10 @@ export function Message<T extends BaseMessage>(
 ) {
   return (target: any, key: string, index: number) => {
     const configs =
-      Reflect.getMetadata(STARRY_METADATA.MESSAGE, target, key) || [];
+      Reflect.getMetadata(virid_METADATA.MESSAGE, target, key) || [];
     // 存储元数据：哪个参数索引，对应哪个消息类
     configs.push({ index, eventClass, single });
-    Reflect.defineMetadata(STARRY_METADATA.MESSAGE, configs, target, key);
+    Reflect.defineMetadata(virid_METADATA.MESSAGE, configs, target, key);
   };
 }
 
@@ -155,7 +155,7 @@ export function Controller() {
     // 1. 依然要保持它可被依赖注入
     injectable()(target);
     // 2. 打上身份标签
-    Reflect.defineMetadata(STARRY_METADATA.CONTROLLER, true, target);
+    Reflect.defineMetadata(virid_METADATA.CONTROLLER, true, target);
   };
 }
 /**
@@ -165,6 +165,6 @@ export function Component() {
   return (target: any) => {
     injectable()(target);
     // 打上组件标签
-    Reflect.defineMetadata(STARRY_METADATA.COMPONENT, true, target);
+    Reflect.defineMetadata(virid_METADATA.COMPONENT, true, target);
   };
 }

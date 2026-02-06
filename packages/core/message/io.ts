@@ -3,7 +3,7 @@
  * @Date: 2026-02-03 09:59:36
  * @LastEditors: ShirahaYuki  shirhayuki2002@gmail.com
  * @LastEditTime: 2026-02-06 11:23:44
- * @FilePath: /starry-project/packages/core/message/io.ts
+ * @FilePath: /virid-project/packages/core/message/io.ts
  * @Description:  消息读写器
  *
  * Copyright (c) 2026 by ShirahaYuki, All Rights Reserved.
@@ -25,7 +25,7 @@ export const publisher: IMessagePublisher = new Proxy({} as IMessagePublisher, {
       return (message: BaseMessage) => {
         if (!activeInstance) {
           console.error(
-            `[Starry] Message dispatched before system init: ${message.constructor.name}`,
+            `[Virid] Message dispatched before system init: ${message.constructor.name}`,
           );
           return;
         }

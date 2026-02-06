@@ -3,12 +3,12 @@
  * @Date: 2026-02-03 11:05:48
  * @LastEditors: ShirahaYuki  shirhayuki2002@gmail.com
  * @LastEditTime: 2026-02-06 11:34:00
- * @FilePath: /starry-project/packages/vue/adapters/bind.ts
+ * @FilePath: /virid-project/packages/vue/adapters/bind.ts
  * @Description: hook绑定适配器，用于处理各种魔法装饰器的绑定逻辑
  *
  * Copyright (c) 2026 by ShirahaYuki, All Rights Reserved.
  */
-import { STARRY_METADATA } from "../decorators/constants";
+import { virid_METADATA } from "../decorators/constants";
 import {
   watch,
   computed,
@@ -24,8 +24,8 @@ import {
   shallowRef,
 } from "vue";
 import { CCSSystemContext, ControllerMessage } from "../decorators";
-import { MessageWriter } from "@starry/core";
-import { starryApp } from "../app";
+import { MessageWriter } from "@virid/core";
+import { viridApp } from "../app";
 // controller注册表
 
 export class GlobalRegistry {
@@ -41,7 +41,7 @@ export class GlobalRegistry {
     } else {
       MessageWriter.error(
         new Error(
-          `[Starry UseController] Duplicate ID: Controller ${id} already exists`,
+          `[Virid UseController] Duplicate ID: Controller ${id} already exists`,
         ),
       );
       return () => false;
@@ -52,7 +52,7 @@ export class GlobalRegistry {
     if (!this.globalRegistry.has(id)) {
       MessageWriter.error(
         new Error(
-          `[Starry UseController] ID Not Found: No Controller found with ID: ${id}`,
+          `[Virid UseController] ID Not Found: No Controller found with ID: ${id}`,
         ),
       );
       return null;
@@ -68,7 +68,7 @@ export function bindProject(
   instance: any,
   rawDeps: Record<string, any>,
 ) {
-  const projects = Reflect.getMetadata(STARRY_METADATA.PROJECT, proto);
+  const projects = Reflect.getMetadata(virid_METADATA.PROJECT, proto);
 
   projects?.forEach((config: any) => {
     const { propertyKey, isAccessor, type, componentClass, source } = config;
@@ -76,7 +76,7 @@ export function bindProject(
     let setter: (val: any) => void = () => {
       MessageWriter.error(
         new Error(
-          `[Starry Shield] Property "${propertyKey}" is read-only.\n` +
+          `[Virid Shield] Property "${propertyKey}" is read-only.\n` +
             `If you need to mutate, define an explicit setter and ensure the dependency is injected.`,
         ),
       );
@@ -84,7 +84,7 @@ export function bindProject(
     // 获取目标对象（确保它是已经 bindResponsive 过的）
     const getTarget = () => {
       const target =
-        type === "component" ? starryApp.get(componentClass) : instance;
+        type === "component" ? viridApp.get(componentClass) : instance;
       if (target && !target.__ccs_processed__) {
         // 兜底：如果没处理过，现场处理（虽然最好在外部流转中处理好）
         bindResponsive(target);
@@ -99,7 +99,7 @@ export function bindProject(
       //如果有set，就警告
       if (rawDescriptor?.set) {
         MessageWriter.warn(
-          `[Starry Project] Possible Implicit Modification:\nManual Set on "${propertyKey}".` +
+          `[Virid Project] Possible Implicit Modification:\nManual Set on "${propertyKey}".` +
             `If this is not intentional, please do not use set.`,
         );
         setter = (val) => {
@@ -153,8 +153,7 @@ export function bindProject(
  */
 
 export function bindWatch(proto: any, instance: any) {
-  const watches: any[] =
-    Reflect.getMetadata(STARRY_METADATA.WATCH, proto) || [];
+  const watches: any[] = Reflect.getMetadata(virid_METADATA.WATCH, proto) || [];
   const stops: WatchStopHandle[] = [];
 
   watches.forEach((config) => {
@@ -162,7 +161,7 @@ export function bindWatch(proto: any, instance: any) {
 
     // 获取目标实例
     const target =
-      type === "component" ? starryApp.get(componentClass) : instance;
+      type === "component" ? viridApp.get(componentClass) : instance;
     // 确保目标实例已经过响应式处理
     if (target && !target.__ccs_processed__) {
       bindResponsive(target);
@@ -174,7 +173,7 @@ export function bindWatch(proto: any, instance: any) {
       } catch (e) {
         MessageWriter.error(
           e as Error,
-          `[Starry Watch] Getter error in ${methodName}`,
+          `[Virid Watch] Getter error in ${methodName}`,
         );
         return undefined;
       }
@@ -211,7 +210,7 @@ export function bindResponsive(instance: any) {
   });
 
   // 偷梁换柱
-  const props = Reflect.getMetadata(STARRY_METADATA.RESPONSIVE, instance) || [];
+  const props = Reflect.getMetadata(virid_METADATA.RESPONSIVE, instance) || [];
   // 先将当前层级的所有属性Ref化
   props.forEach((config: any) => {
     const key = config.propertyKey;
@@ -280,7 +279,7 @@ export function createDeepShield(
 
       // 优雅地失败，并给出修复建议
       const errorMsg = [
-        `[Starry DeepShield]`,
+        `[Virid DeepShield]`,
         `------------------------------------------------`,
         `Component: ${rootName}`,
         `Code: this.${rootName}.${currentPath}`,
@@ -295,7 +294,7 @@ export function createDeepShield(
     deleteProperty(_obj, prop) {
       MessageWriter.error(
         new Error(
-          `[Starry DeepShield] Physical Protection:\nProhibit Deletion of Component Attributes ${String(prop)}`,
+          `[Virid DeepShield] Physical Protection:\nProhibit Deletion of Component Attributes ${String(prop)}`,
         ),
       );
       return false;
@@ -305,7 +304,7 @@ export function createDeepShield(
     defineProperty() {
       MessageWriter.error(
         new Error(
-          `[Starry DeepShield] Physical Protection:\nProhibit redefining component attribute structure`,
+          `[Virid DeepShield] Physical Protection:\nProhibit redefining component attribute structure`,
         ),
       );
       return false;
@@ -317,7 +316,7 @@ export function createDeepShield(
  * 解析 @OnHook 并将其绑定到 Vue 生命周期
  */
 export function bindHooks(proto: any, instance: any) {
-  const hooks = Reflect.getMetadata(STARRY_METADATA.LIFE_CRICLE, proto);
+  const hooks = Reflect.getMetadata(virid_METADATA.LIFE_CRICLE, proto);
 
   hooks?.forEach((config: any) => {
     const { hookName, methodName } = config;
@@ -351,7 +350,7 @@ export function bindHooks(proto: any, instance: any) {
  * 执行并绑定万能 Hooks
  */
 export function bindUseHooks(proto: any, instance: any) {
-  const hooks = Reflect.getMetadata(STARRY_METADATA.USE_HOOKS, proto);
+  const hooks = Reflect.getMetadata(virid_METADATA.USE_HOOKS, proto);
 
   hooks?.forEach((config: any) => {
     // 在 useController 运行期间执行 hookFactory()
@@ -366,7 +365,7 @@ export function bindUseHooks(proto: any, instance: any) {
  **/
 export function bindListener(proto: any, instance: any): (() => void)[] {
   const listenerConfigs: any[] =
-    Reflect.getMetadata(STARRY_METADATA.CONTROLLER_LISTENERS, proto) || [];
+    Reflect.getMetadata(virid_METADATA.CONTROLLER_LISTENERS, proto) || [];
   const unbindFunctions: (() => void)[] = [];
 
   listenerConfigs.forEach(({ propertyKey, eventClass, priority, single }) => {
@@ -392,7 +391,7 @@ export function bindListener(proto: any, instance: any): (() => void)[] {
     };
     (wrappedHandler as any).ccsContext = taskContext;
 
-    const unregister = starryApp.register(eventClass, wrappedHandler, priority);
+    const unregister = viridApp.register(eventClass, wrappedHandler, priority);
     unbindFunctions.push(unregister);
   });
 
@@ -403,7 +402,7 @@ export function bindListener(proto: any, instance: any): (() => void)[] {
  * @description: 启动@Inherit 使能够只读其他的controller
  **/
 export function bindInherit(proto: any, instance: any) {
-  const inherits = Reflect.getMetadata(STARRY_METADATA.INHERIT, proto);
+  const inherits = Reflect.getMetadata(virid_METADATA.INHERIT, proto);
   if (!inherits) return;
 
   // @ts-ignore : token
@@ -415,7 +414,7 @@ export function bindInherit(proto: any, instance: any) {
       const target = GlobalRegistry.get(id); // 自动依赖 Registry 的增删
       if (!target) {
         MessageWriter.warn(
-          `[Starry Inherit] Warning:\n Inherit target not found: ${id}`,
+          `[Virid Inherit] Warning:\n Inherit target not found: ${id}`,
         );
         return null;
       }
@@ -433,7 +432,7 @@ export function bindInherit(proto: any, instance: any) {
       set: () => {
         MessageWriter.error(
           new Error(
-            `[Starry Inherit] No Modification:\nAttempted to set read-only Inherit property: ${propertyKey}`,
+            `[Virid Inherit] No Modification:\nAttempted to set read-only Inherit property: ${propertyKey}`,
           ),
         );
       },

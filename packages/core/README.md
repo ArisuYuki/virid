@@ -1,16 +1,16 @@
-# 🛰️ @starry/core
+# 🛰️ @virid/core
 
 [中文说明](file://.README.zh.md)
 
-> **A Lightweight, Message-Driven Logic Engine inspired by Rust's ECS Architecture and Nestjs.** 
+> **A Lightweight, Message-Driven Logic Engine inspired by Rust's ECS Architecture and Nestjs.**
 
-## ✨  Features
+## ✨ Features
 
 ## 🛠️ Decoupling of Logic Sovereignty
 
 ### 1. Total UI Demotion: Framework-Agnostic Core
 
-- **Transfer of Sovereignty**: The UI framework is stripped of its authority over state management and business scheduling, relegated to a pure **"State Projection Layer."** All business causality and state machine transitions are executed within the closed loop of `Starry Core`.
+- **Transfer of Sovereignty**: The UI framework is stripped of its authority over state management and business scheduling, relegated to a pure **"State Projection Layer."** All business causality and state machine transitions are executed within the closed loop of `virid Core`.
 - **Physical Isolation**: The Core layer has zero dependencies on `DOM/BOM` APIs. Your core logic runs seamlessly in **Node.js servers, Web Workers, or even Command Line Interface (CLI) tools**.
 - **Seamless Migration**: Logical assets are no longer tethered to a specific UI library. Switch the adapter layer, and you are ready for **Vue, React, or beyond**.
 
@@ -24,7 +24,7 @@
 - **Deep IoC Architecture**: Built on **InversifyJS** for robust Dependency Injection. `Systems`, `Components`, and `Controllers` are auto-assembled via the container.
 - **Dynamic Lifecycle**: Supports on-demand loading and auto-injection of logic modules. Whether it’s a global singleton `System` or a `Controller` that dies with a component, the container manages the entire lifecycle.
 
-------
+---
 
 ## 🏎️ Game-Grade Scheduling Engine
 
@@ -34,14 +34,14 @@
   - **SingleMessage (Signal)**: Automatically merges identical signals, triggering a single batch process within the same Tick.
   - **EventMessage (Event)**: Guarantees strict sequential execution, ensuring the atomicity of logical chains.
 
-------
+---
 
 ## 🛡️ State Security & Access Control
 
 - **Read-Only Data Shield**: Controllers receive read-only proxies by default, strictly prohibiting illegal tampering with `Component` states outside of a `System`.
 - **Atomic Modification Protocol**: Data changes are forced through specific `AtomicModifyMessage` protocols, ensuring every state transition is traceable and auditable.
 
-------
+---
 
 ## 🧬 Declarative Meta-Programming
 
@@ -49,6 +49,7 @@
 - **Automated Data Routing**: Dispatching a message immediately triggers the response; parameters are injected automatically, eliminating the need to write tedious boilerplate for listeners and dispatchers.
 
 ## 📖 Quick Start
+
 ⚠️ Important: You MUST import reflect-metadata at the very first line of your entry file (e.g., main.ts), otherwise decorators will not function correctly.
 
 Build a strictly protected state machine in a pure JS environment in just three steps.
@@ -59,16 +60,16 @@ Build a strictly protected state machine in a pure JS environment in just three 
 
 ```ts
 import {
-  createStarry,
+  createvirid,
   Component,
   System,
   Message,
   SingleMessage,
   AtomicModifyMessage,
-} from '@starry/core';
+} from "@virid/core";
 
 // Initialize the core engine
-const app = createStarry();
+const app = createvirid();
 
 // Define Data Entity (Component)
 @Component()
@@ -88,7 +89,7 @@ class IncrementMessage extends SingleMessage {
 
 ### 2. Implement Systems
 
-**Systems** are stateless static methods. They retrieve components via Dependency Injection (DI) to handle business logic. You don't need to manually instantiate or invoke them—Starry will automatically discover and execute them through static analysis.
+**Systems** are stateless static methods. They retrieve components via Dependency Injection (DI) to handle business logic. You don't need to manually instantiate or invoke them—virid will automatically discover and execute them through static analysis.
 
 ```ts
 //Define System
@@ -131,7 +132,7 @@ queueMicrotask(() => {
 
 ### ⚓ Lifecycle Interception (Middleware & AOP Hooks)
 
-Starry provides deep access to the message pipeline, allowing you to easily extend the system with features like **Undo/Redo, State Synchronization, or Automated Logging**.
+virid provides deep access to the message pipeline, allowing you to easily extend the system with features like **Undo/Redo, State Synchronization, or Automated Logging**.
 
 - **Middleware**: Pre-process messages before they enter the `EventHub`.
 
@@ -145,7 +146,6 @@ Starry provides deep access to the message pipeline, allowing you to easily exte
   ```
 
 - **AOP Hooks**: Perform aspect-oriented processing before or after specific message execution.
-
   - `onBeforeExecute`: Triggered before System logic runs (e.g., for permission checks).
   - `onAfterExecute`: Triggered after logic execution (e.g., for data persistence).
 
@@ -160,39 +160,39 @@ Starry provides deep access to the message pipeline, allowing you to easily exte
   });
   ```
 
-------
+---
 
 ### ⚡ Atomic Modification: The "Snapshot" Privilege
 
-To balance **strict constraints** with **development efficiency**, Starry allows direct state mutations via `AtomicModifyMessage` without the need to write a full `System`.
+To balance **strict constraints** with **development efficiency**, virid allows direct state mutations via `AtomicModifyMessage` without the need to write a full `System`.
 
 - **Semantic Mutations**: Every atomic modification requires a mandatory `label`, transforming "arbitrary" assignments into auditable, meaningful actions.
 - **Consistency Guarantee**: Atomic modifications still follow the **Tick Scheduling** mechanism, ensuring that data changes are synchronized with System logic.
 
-------
+---
 
 ### 🚨 Everything is a Message: Robust Error Monitoring
 
-Starry treats exceptions as first-class citizens of the system:
+virid treats exceptions as first-class citizens of the system:
 
 - **Automatic Encapsulation**: Any synchronous or asynchronous exception within a `System` or `Hook` is automatically captured by the `Dispatcher` and encapsulated into an `ErrorMessage`.
 - **Defensive Programming**: You can define a dedicated `ErrorSystem` to handle these messages globally (e.g., reporting to Sentry or triggering UI alerts). This ensures the core engine remains resilient and never crashes due to a single component failure.
 
-------
+---
 
-------
+---
 
-## 🚀 Conclusion: Why Starry?
+## 🚀 Conclusion: Why virid?
 
-Starry is not just another state management library; it is an endeavor to introduce **Deterministic Industrial Standards** to Web development.
+virid is not just another state management library; it is an endeavor to introduce **Deterministic Industrial Standards** to Web development.
 
-As your project scales from dozens to thousands of components, and your business logic evolves from simple CRUD into intricate cross-component choreographies, the Starry architecture ensures that your codebase remains:
+As your project scales from dozens to thousands of components, and your business logic evolves from simple CRUD into intricate cross-component choreographies, the virid architecture ensures that your codebase remains:
 
 - **Traceable**: Every logical transition has a clear trail via messages.
 - **Predictable**: Every state modification follows strict, predefined protocols.
 - **Decoupled**: Every business flow can be tested and validated entirely independent of the UI.
 
-### 🛰️ Data Flow Architecture 
+### 🛰️ Data Flow Architecture
 
 ```mermaid
 graph TD
@@ -200,14 +200,14 @@ graph TD
     User([External/Logic Call]) -->|Message.send| Writer[MessageWriter]
 
     %% 核心引擎内部
-    subgraph Engine [Starry Core Engine]
+    subgraph Engine [Virid Core Engine]
         direction TB
         Writer -->|Middleware Pipeline| Hub[EventHub: Staging]
-        
+
         subgraph Dispatcher [Deterministic Dispatcher]
             Hub -->|Tick / Buffer Flip| Active[EventHub: Active Pool]
             Active -->|Sort by Priority| TaskQueue[Task Queue]
-            
+
             subgraph Executor [Execution Context]
                 TaskQueue -->|Identify| Sys[System Static Method]
                 Container[(Inversify Container)] -.->|Inject Component| Sys
@@ -216,7 +216,7 @@ graph TD
         end
 
         Logic -->|Update| Data[(Raw Component Data)]
-        
+
         %% 异常与反馈流
         Logic -- "New Message" --> Writer
         Logic -- "Error" --> ErrorHandler[Error Message System]
@@ -229,4 +229,5 @@ graph TD
     style Engine fill:#fff,stroke:#333,stroke-width:2px
     style Dispatcher fill:#f5f5f5,stroke:#666,dashed
     style Container fill:#e1f5fe,stroke:#01579b
- 
+
+```

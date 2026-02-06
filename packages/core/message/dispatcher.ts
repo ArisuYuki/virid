@@ -3,7 +3,7 @@
  * @Date: 2026-02-01 16:02:19
  * @LastEditors: ShirahaYuki  shirhayuki2002@gmail.com
  * @LastEditTime: 2026-02-06 11:22:07
- * @FilePath: /starry-project/packages/core/message/dispatcher.ts
+ * @FilePath: /virid-project/packages/core/message/dispatcher.ts
  * @Description:事件调度中心
  *
  * Copyright (c) 2026 by ShirahaYuki, All Rights Reserved.
@@ -45,14 +45,14 @@ export class ExecutionTask {
             result.catch((e) =>
               MessageWriter.error(
                 e,
-                `[Starry Hook] Async Hook Error:\n${hook.type.name}`,
+                `[Virid Hook] Async Hook Error:\n${hook.type.name}`,
               ),
             );
           }
         } catch (e) {
           MessageWriter.error(
             e as Error,
-            `[Starry Hook] Hook Execute Failed:\nTriggered by: ${sample.constructor.name}\n Registered type: ${hook.type.name}`,
+            `[Virid Hook] Hook Execute Failed:\nTriggered by: ${sample.constructor.name}\n Registered type: ${hook.type.name}`,
           );
         }
       }
@@ -150,7 +150,7 @@ export class Dispatcher {
       this.eventQueue = [];
       this.eventHub.reset();
       MessageWriter.error(
-        new Error("[Starry Dispatcher] Deadlock: Recursive loop detected."),
+        new Error("[Virid Dispatcher] Deadlock: Recursive loop detected."),
       );
       return;
     }
@@ -216,7 +216,7 @@ export class Dispatcher {
               result.catch((e) =>
                 MessageWriter.error(
                   e,
-                  `[Starry Dispatcher] Async Error:\ntargetClass:${task.context.targetClass}\nmethodName:${task.context.methodName}
+                  `[Virid Dispatcher] Async Error:\ntargetClass:${task.context.targetClass}\nmethodName:${task.context.methodName}
                 `,
                 ),
               );
@@ -224,7 +224,7 @@ export class Dispatcher {
           } catch (e) {
             MessageWriter.error(
               e as Error,
-              `[Starry Dispatcher] Sync Error:\ntargetClass:${task.context.targetClass}\nmethodName:${task.context.methodName}
+              `[Virid Dispatcher] Sync Error:\ntargetClass:${task.context.targetClass}\nmethodName:${task.context.methodName}
                 `,
             );
           }
@@ -242,7 +242,7 @@ export class Dispatcher {
           this.tickCount = 0;
         }
       } catch (e) {
-        MessageWriter.error(e as Error, "[Starry Dispatcher] Unhandled Error");
+        MessageWriter.error(e as Error, "[Virid Dispatcher] Unhandled Error");
       }
     });
   }

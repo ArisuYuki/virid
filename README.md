@@ -1,4 +1,4 @@
-## 🏗️ Starry (CCS Framework)
+## 🏗️ virid (CCS Framework)
 
 A Heavy-Duty Architecture for Large-Scale Frontend Applications.
 
@@ -6,7 +6,7 @@ A Heavy-Duty Architecture for Large-Scale Frontend Applications.
 
 ## 🚀 核心理念：CCS (Component-Controller-System)
 
-Starry 摒弃了传统 Vue 项目中散乱的状态管理，通过借鉴 ECS (实体组件系统) 和 IoC (依赖注入) 理念，构建了一个三位一体的确定性架构：
+virid 摒弃了传统 Vue 项目中散乱的状态管理，通过借鉴 ECS (实体组件系统) 和 IoC (依赖注入) 理念，构建了一个三位一体的确定性架构：
 
 Component (数据/状态)： 纯粹的 POJO 类，作为“单一事实来源”。
 
@@ -14,11 +14,11 @@ Controller (交互/展示)： UI 的逻辑适配层，负责响应 Vue 生命周
 
 System (业务/逻辑)： 无状态的静态处理器，通过“消息总线”驱动，与渲染层彻底解耦
 
-## ✨ 为什么选择 Starry？
+## ✨ 为什么选择 virid？
 
 1. ## 强力解耦：逻辑可脱离 UI 运行
 
-  得益于 IoC 容器（Inversify）和消息调度系统，你的核心业务逻辑完全不依赖 Vue。这意味着你可以：
+得益于 IoC 容器（Inversify）和消息调度系统，你的核心业务逻辑完全不依赖 Vue。这意味着你可以：
 
 在没有浏览器的情况下进行纯逻辑测试。
 
@@ -28,7 +28,7 @@ System (业务/逻辑)： 无状态的静态处理器，通过“消息总线”
 
 2. ## 消息驱动的“确定性”
 
-  所有的状态变更必须通过 Dispatcher 派发消息。
+所有的状态变更必须通过 Dispatcher 派发消息。
 
 单向数据流： 每一条消息都是不可变的，状态变更可预测、可追踪。
 
@@ -44,4 +44,4 @@ System (业务/逻辑)： 无状态的静态处理器，通过“消息总线”
 
 ## 💡 开发者寄语
 
-Starry 不是为了写简单的“增删改查”而生的，它是为了那些逻辑密度极高、对稳定性有近乎偏执要求的重型 Electron 应用而打造。
+virid 不是为了写简单的“增删改查”而生的，它是为了那些逻辑密度极高、对稳定性有近乎偏执要求的重型 Electron 应用而打造。

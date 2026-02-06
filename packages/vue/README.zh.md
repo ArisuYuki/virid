@@ -1,24 +1,23 @@
-# @starry/vue
+# @virid/vue
 
-
-> **The Bridge between Starry Core and Vue.** 
+> **The Bridge between virid Core and Vue.**
 >
-> **使 Vue 成为 Starry 引擎最华丽的“状态投影仪”。**
+> **使 Vue 成为 virid 引擎最华丽的“状态投影仪”。**
 
 ## 🧩 定位：统治视图投影
 
-`@starry/vue` 绝非一个普通的 Vue 状态管理插件。相反，在 Starry 的世界观里：**Vue 才是 Starry 的插件。**
+`@virid/vue` 绝非一个普通的 Vue 状态管理插件。相反，在 virid 的世界观里：**Vue 才是 virid 的插件。**
 
 ### 核心哲学：架构主权
 
-传统的开发模式是“在 Vue 中写业务”；而在 Starry 中，**业务在 Core 中永生**，Vue 仅仅是业务逻辑在浏览器 DOM 上的一层**临时投影**。
+传统的开发模式是“在 Vue 中写业务”；而在 virid 中，**业务在 Core 中永生**，Vue 仅仅是业务逻辑在浏览器 DOM 上的一层**临时投影**。
 
 - **逻辑主权**：所有的因果律（Message）、规则集（System）和数据源（Component）都独立于 Vue 运行。
 - **视图终端**：Vue 失去了对状态的修改权。它被降级为一个智能终端，仅负责接收投影并触发指令。
 
 ### 🛡️ 它为 Core 增加了什么能力？
 
-如果说 Core 是大脑，那么 `@starry/vue` 就为大脑接入了神经元。它赋予了 Core 跨越“逻辑与视图”鸿沟的特权：
+如果说 Core 是大脑，那么 `@virid/vue` 就为大脑接入了神经元。它赋予了 Core 跨越“逻辑与视图”鸿沟的特权：
 
 #### 1. **数据现世化：响应式投影 (Reactive Projection)**
 
@@ -39,9 +38,9 @@ Core 是单例且扁平的，而 UI 是树状且多变的。
 Vue 自身的生命周期和事件通常是混乱的。
 
 - **能力增强**：插件引入了 `@Listener` 和 `@OnHook`。它让 UI 的动作（如点击、挂载）不再直接运行业务，而是转化为一条 `ControllerMessage`。
-- **能力表现**：一切 UI 行为都被规范化为“消息”。Core 像裁判一样通过 `System` 裁决这些消息。这确保了即便是在 Vue 环境下，每一行逻辑的执行也必须经过 Starry 调度中心的优先级排队。
+- **能力表现**：一切 UI 行为都被规范化为“消息”。Core 像裁判一样通过 `System` 裁决这些消息。这确保了即便是在 Vue 环境下，每一行逻辑的执行也必须经过 virid 调度中心的优先级排队。
 
-## 🚀 快速上手：Starry 实战示例
+## 🚀 快速上手：virid 实战示例
 
 在这个例子中，我们将实现：**点击列表中的一首歌，通过 Controller 发送指令，最后由 System 决定播放逻辑。**
 
@@ -50,15 +49,9 @@ Vue 自身的生命周期和事件通常是混乱的。
 首先，在 Core 中定义你的数据结构。这里不需要关心 Vue。
 
 ```vue
-//PlayerComponent.ts
-import { Component } from '@starry/core'
-import { Responsive } from '@starry/vue'
-
-@Component()
-export class PlaylistComponent {
-  @Responsive() // 让 Core 的数据在 Vue 里可感应
-  public currentSongName: string = '未播放'
-}
+//PlayerComponent.ts import { Component } from '@virid/core' import { Responsive
+} from '@virid/vue' @Component() export class PlaylistComponent { @Responsive()
+// 让 Core 的数据在 Vue 里可感应 public currentSongName: string = '未播放' }
 ```
 
 ### 2. 定义指令 (Message)
@@ -67,7 +60,7 @@ export class PlaylistComponent {
 
 ```
 // logic/messages.ts
-import { SingleMessage } from '@starry/core'
+import { SingleMessage } from '@virid/core'
 
 export class PlaySongMessage extends SingleMessage {
   constructor(public songName: string) { super() }
@@ -80,7 +73,7 @@ export class PlaySongMessage extends SingleMessage {
 
 ```
 // PlayerSystem.ts
-import { System, Message } from '@starry/core'
+import { System, Message } from '@virid/core'
 import { PlaySongMessage } from '../messages'
 import { PlaylistComponent } from '../components/PlayerComponent'
 
@@ -96,14 +89,14 @@ export class PlayerSystem {
 
 ### 4. 接入视图 (Controller & Vue)
 
-这是 `@starry/vue` 展现魔力的地方。它把逻辑“投影”给 Vue。
+这是 `@virid/vue` 展现魔力的地方。它把逻辑“投影”给 Vue。
 
 **Controller (逻辑适配器):**
 
 ```
 // logic/controllers/SongController.ts
-import { Controller } from '@starry/core'
-import { Project } from '@starry/vue'
+import { Controller } from '@virid/core'
+import { Project } from '@virid/vue'
 import { PlaylistComponent } from '../components/PlayerComponent'
 import { PlaySongMessage } from '../messages'
 
@@ -112,9 +105,9 @@ export class SongController {
   @Project(PlaylistComponent, (c) => c.currentSongName)
   public playing!: string // 投影：只读 Core 的数据
   //定义自己的数据
-  @Responsive() 
+  @Responsive()
   public list = ['think of you', 'ROCK IN!', 'Instant Love']
-  
+
   play(name: string) {
     PlaySongMessage.send(name) // 发送指令，而不是直接改数据
   }
@@ -134,16 +127,16 @@ export class SongController {
 </template>
 
 <script setup lang="ts">
-import { useController } from '@starry/vue'
+import { useController } from '@virid/vue'
 import { SongController } from './logic/controllers/SongController'
 //所有的魔法在这里发生
 const ctrl = useController(SongController)
 </script>
 ```
 
-------
+---
 
-## 📘 Starry 核心概念：通俗演义版
+## 📘 virid 核心概念：通俗演义版
 
 ### 1. `@Project` —— 单向透镜（投影仪）
 
@@ -161,7 +154,7 @@ const ctrl = useController(SongController)
 
 - **白话解释**：在 Vue 的海洋里，扔下一个锚点，把 Core 里的逻辑怪兽“牵”过来。
 - **它在做什么**：Vue 组件说：“我只想管样式，不想管怎么播放。”于是它通过 `useController` 找来了一个代办人（Controller）。这个代办人已经在 IOC 容器里准备好了，组件挂载它就出现，组件销毁它就隐退。
-- **潜规则**：它是 Vue 世界与 Starry Core 世界的**唯一官方接口**。
+- **潜规则**：它是 Vue 世界与 virid Core 世界的**唯一官方接口**。
 
 ### 4. `Message.send` —— 因果律启动（递交申请书）
 
@@ -205,7 +198,7 @@ const ctrl = useController(SongController)
 - **它在做什么**：比如 `@OnHook('onSetup')`，让你在 Controller 初始化时去服务器拉取初始歌单。
 - **潜规则**：它让你的 Controller 虽然住在 Core 的思想里，但却能精准踩上 Vue 舞台的节拍。
 
-------
+---
 
 ## ⚡ 这一套流程的“因果链条”
 
@@ -216,7 +209,7 @@ const ctrl = useController(SongController)
 5. **数据投影**：由于数据标记了 `@Responsive`，且 Controller 标记了 `@Project`，影子变量 `playing` 自动更新。
 6. **UI 震荡**：Vue 发现数据变了，重新渲染界面，用户看到“当前播放”变了。
 
-------
+---
 
 ### 💡 为什么这样写更优雅？
 
@@ -226,9 +219,9 @@ const ctrl = useController(SongController)
 
 ## 🌌 结语：让 UI 回归投影，让逻辑重获自由
 
-在传统的开发模式中，业务逻辑往往沦为 UI 框架的附庸，散落在组件的生命周期与副作用钩子中。**Starry** 的诞生，是为了重新划定边界。
+在传统的开发模式中，业务逻辑往往沦为 UI 框架的附庸，散落在组件的生命周期与副作用钩子中。**virid** 的诞生，是为了重新划定边界。
 
-核心业务逻辑应该是**纯粹、稳固且可测试的**。它不应被特定的 UI 渲染管线所绑架，而应像星辰般独立运行在自己的轨道上。通过剥离 UI 的主权，Starry 赋予了开发者构建跨端、高鲁棒性复杂系统的能力。
+核心业务逻辑应该是**纯粹、稳固且可测试的**。它不应被特定的 UI 渲染管线所绑架，而应像星辰般独立运行在自己的轨道上。通过剥离 UI 的主权，virid 赋予了开发者构建跨端、高鲁棒性复杂系统的能力。
 
 ## 示例中的部分数据流向图
 
@@ -240,28 +233,28 @@ graph TD
     end
 
     %% 适配层：装饰器魔法与消息路由
-    subgraph Adapter ["Starry Vue Adapter"]
+    subgraph Adapter ["virid Vue Adapter"]
         direction TB
         SC -->|"SongControllerMessage.send(this.index)"| SCM["SongControllerMessage (Local)"]
-        
+
         %% 核心拦截逻辑
         SCM -->|"@Listener"| PC[PlaylistController]
-        
+
         subgraph Magic ["Logic Decoration"]
             SC -- "@Env" --> E["index (From Context)"]
             SC -- "@Inherit" --> I["playlist (From PC)"]
             SC -- "@Project" --> P["song (Computed by index)"]
         end
-        
+
         PC -->|"PlaySongMesage.send(song)"| PSM["PlaySongMesage (Global Domain)"]
     end
 
     %% 核心引擎：确定性处理
-    subgraph Core ["Starry Core Engine"]
+    subgraph Core ["virid Core Engine"]
         direction TB
         PSM --> Hub["EventHub (Queueing)"]
         Hub -->|"Tick / Buffer Flip"| Active["Active Pool"]
-        
+
         subgraph Execution ["System Execution"]
             Active --> Sys["Player.playThisSong (Static)"]
             DI[("(Inversify Container)")] -.->|Inject| PLC["PlaylistComponent"]

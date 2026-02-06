@@ -3,7 +3,7 @@
  * @Date: 2026-02-01 15:31:35
  * @LastEditors: ShirahaYuki  shirhayuki2002@gmail.com
  * @LastEditTime: 2026-02-05 20:51:46
- * @FilePath: /starry-project/packages/core/decorators/constants.ts
+ * @FilePath: /virid-project/packages/core/decorators/constants.ts
  * @Description:字符串类型常量
  *
  * Copyright (c) 2026 by ShirahaYuki, All Rights Reserved.
@@ -11,9 +11,9 @@
 /**
  * CCS 核心元数据键名
  */
-export const STARRY_METADATA = {
-  SYSTEM: "starry:system_metadata",
-  MESSAGE: "starry:message",
-  CONTROLLER: "starry:controller",
-  COMPONENT: "starry:component",
+export const virid_METADATA = {
+  SYSTEM: "virid:system_metadata",
+  MESSAGE: "virid:message",
+  CONTROLLER: "virid:controller",
+  COMPONENT: "virid:component",
 } as const;

@@ -3,7 +3,7 @@
  * @Date: 2026-02-03 09:34:30
  * @LastEditors: ShirahaYuki  shirhayuki2002@gmail.com
  * @LastEditTime: 2026-02-06 11:22:30
- * @FilePath: /starry-project/packages/core/message/internal.ts
+ * @FilePath: /virid-project/packages/core/message/internal.ts
  * @Description:消息系统内部维护的一些状态
  *
  * Copyright (c) 2026 by ShirahaYuki, All Rights Reserved.
@@ -56,7 +56,7 @@ export class MessageInternal {
     if (!this.registry.interestMap.has(message.constructor)) {
       MessageWriter.error(
         new Error(
-          `[Starry Dispatch] No handler for message: ${message.constructor.name}`,
+          `[Virid Dispatch] No handler for message: ${message.constructor.name}`,
         ),
       );
       return;

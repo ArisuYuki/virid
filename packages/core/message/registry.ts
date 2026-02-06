@@ -3,7 +3,7 @@
  * @Date: 2026-02-03 10:00:24
  * @LastEditors: ShirahaYuki  shirhayuki2002@gmail.com
  * @LastEditTime: 2026-02-06 11:23:57
- * @FilePath: /starry-project/packages/core/message/registry.ts
+ * @FilePath: /virid-project/packages/core/message/registry.ts
  * @Description:给消息的注册器，收集所有的system函数
  *
  * Copyright (c) 2026 by ShirahaYuki, All Rights Reserved.
@@ -38,7 +38,7 @@ export class MessageRegistry {
       const funcName = systemFn.name || "Anonymous";
       MessageWriter.error(
         new Error(
-          `[Starry Error] System Already Registered:\nClass ${eventClass.name}\nFunction ${funcName}`,
+          `[Virid Error] System Already Registered:\nClass ${eventClass.name}\nFunction ${funcName}`,
         ),
       );
       return () => {};

@@ -8,10 +8,10 @@
 </template>
 
 <script setup lang="ts">
-import Song from './Song.vue'
-import { useController } from '@starry/vue'
-import { PlaylistController } from '@/logic/controllers/playListController'
-const plct = useController(PlaylistController, { id: 'playlist' })
+  import Song from "./Song.vue";
+  import { useController } from "@virid/vue";
+  import { PlaylistController } from "@/logic/controllers/playListController";
+  const plct = useController(PlaylistController, { id: "playlist" });
 </script>
 
 <style lang="scss" scoped></style>

@@ -3,7 +3,7 @@
  * @Date: 2026-02-03 09:57:20
  * @LastEditors: ShirahaYuki  shirhayuki2002@gmail.com
  * @LastEditTime: 2026-02-06 10:51:14
- * @FilePath: /starry-project/packages/core/message/types.ts
+ * @FilePath: /virid-project/packages/core/message/types.ts
  * @Description:  消息类型定义
  *
  * Copyright (c) 2026 by ShirahaYuki, All Rights Reserved.

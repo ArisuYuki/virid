@@ -2,10 +2,10 @@
     "compilerOptions": {
         "baseUrl": ".",
         "paths": {
-            "@starry/core": [
+            "@virid/core": [
                 "packages/core/index.ts"
             ],
-            "@starry/vue": [
+            "@virid/vue": [
                 "packages/vue/index.ts"
             ]
         },

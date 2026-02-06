@@ -1,6 +1,6 @@
-import { StarryApp } from "./app";
+import { ViridApp } from "./app";
 
-export interface StarryPlugin {
+export interface ViridPlugin {
   name: string;
-  install: (app: StarryApp, options?: any) => void;
+  install: (app: ViridApp, options?: any) => void;
 }
