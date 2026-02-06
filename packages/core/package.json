@@ -30,7 +30,8 @@
     "dist"
   ],
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
     "build": "tsup index.ts --format esm,cjs --dts --clean --external reflect-metadata --external inversify",

@@ -1,18 +1,19 @@
 {
   "name": "starry-project",
   "private": true,
-  "workspaces": [
-    "packages/*"
-  ],
+  "packageManager": "pnpm@9.0.0",
   "scripts": {
-    "dev": "tsc -b -w",
-    "build": "tsc -b"
+    "build": "pnpm -r run build",
+    "dev": "pnpm -r run dev",
+    "clean": "rm -rf node_modules && pnpm -r exec rm -rf dist node_modules",
+    "example": "pnpm --filter @starry/core run example"
   },
   "devDependencies": {
     "@swc/core": "^1.15.11",
     "@swc/helpers": "^0.5.18",
     "regenerator-runtime": "^0.14.1",
     "tsup": "^8.5.1",
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "reflect-metadata": "^0.2.2"
   }
 }
