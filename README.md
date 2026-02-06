@@ -1,47 +1,44 @@
-## 🏗️ virid (CCS Framework)
+# 🌌 virid
 
-A Heavy-Duty Architecture for Large-Scale Frontend Applications.
+[中文说明](file://.README.zh.md)
+**The Sovereign Logic Engine & Reactive Projection System**
 
-"让 Vue 只做渲染，让逻辑回归秩序。" —— 这是一个由 Rust 开发者为解决前端混乱而锻造的工业级底座。
+**Deconstructing UI Sovereignty, Reshaping Logic Boundaries.**
 
-## 🚀 核心理念：CCS (Component-Controller-System)
+`virid` is a lightweight, message-driven engine inspired by **Rust Bevy ECS** and **NestJS**. It is designed to liberate business logic from being a "subservient" part of UI frameworks, building a deterministic, testable, and cross-platform core.
 
-virid 摒弃了传统 Vue 项目中散乱的状态管理，通过借鉴 ECS (实体组件系统) 和 IoC (依赖注入) 理念，构建了一个三位一体的确定性架构：
+---
 
-Component (数据/状态)： 纯粹的 POJO 类，作为“单一事实来源”。
+### 🧠 Core Architecture: Logic Sovereignty
 
-Controller (交互/展示)： UI 的逻辑适配层，负责响应 Vue 生命周期并投影数据。
+In the world of `virid`, business logic is the "first-class citizen," while the UI is merely a **"temporary projection"** of that logic. This architecture is known as **CCS**.
 
-System (业务/逻辑)： 无状态的静态处理器，通过“消息总线”驱动，与渲染层彻底解耦
+- **Logic Autonomy**: Core business runs within `@virid/core`, completely independent of DOM/BOM APIs, supporting cross-platform reuse.
+- **Physical Isolation**: UI frameworks (like Vue) are downgraded to pure state projectors, losing the authority to modify state directly.
+- **Causality-Driven**: All state changes must be requested via a `Message` and adjudicated by a `System`, creating a closed-loop chain of causality.
 
-## ✨ 为什么选择 virid？
+---
 
-1. ## 强力解耦：逻辑可脱离 UI 运行
+### 📦 Modules
 
-得益于 IoC 容器（Inversify）和消息调度系统，你的核心业务逻辑完全不依赖 Vue。这意味着你可以：
+| **Module**        | **Role**                  | **Key Features**                                                                       |
+| ----------------- | ------------------------- | -------------------------------------------------------------------------------------- |
+| **`@virid/core`** | **The Brain (Logic Hub)** | Deterministic Tick mechanism, double-buffered message pools, and Dependency Injection. |
+| **`@virid/vue`**  | **The Neuron (Adapter)**  | Reactive Projection (Deep Shield), Dependency Tethering, and Lifecycle bridging.       |
 
-在没有浏览器的情况下进行纯逻辑测试。
+---
 
-轻松实现 Electron 主/渲染进程的逻辑复用。
+### 🎯 Why virid?
 
-在不改动逻辑的情况下，将渲染层从 Vue 迁移至其他框架。
+- **High Consistency**: Based on a game-grade scheduling engine, avoiding logic jitter in complex UI interactions.
+- **Zero-Mock Testing**: Business logic can be 100% covered by unit tests in a pure JS environment via "Message-in, State-out" assertions.
+- **Secure Data Flow**: Enforces unidirectional data flow through a read-only projection shield, making logic changes 100% auditable.
 
-2. ## 消息驱动的“确定性”
+---
 
-所有的状态变更必须通过 Dispatcher 派发消息。
+### 🔗 Deep Dive
 
-单向数据流： 每一条消息都是不可变的，状态变更可预测、可追踪。
+For implementation details and quick-start examples, please refer to the sub-package documentation:
 
-日志修改： 所有的修改操作都无法脱离调度系统，不存在“谁动了我的代码”这种问题
-
-## 🛠️ 工业级特性
-
-双缓冲调度： 模拟游戏引擎，在前端实现可靠、有序的调度系统，按照顺序执行系统。
-
-依赖注入： 自动管理控制器与系统的生命周期，彻底告别手动实例化的烦恼。
-
-装饰器驱动： 声明式开发，代码风格高度统一，极大降低大型团队的协作成本。
-
-## 💡 开发者寄语
-
-virid 不是为了写简单的“增删改查”而生的，它是为了那些逻辑密度极高、对稳定性有近乎偏执要求的重型 Electron 应用而打造。
+- 👉 **[@virid/core](file://.packages/core/README.md)** – Learn about the CCS architecture, message scheduling, and state management.
+- 👉 **[@virid/vue](file://.packages/vue/README.md)** – Learn how to project logic onto the Vue view layer.
