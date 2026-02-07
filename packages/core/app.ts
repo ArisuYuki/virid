@@ -2,8 +2,8 @@
  * @Author: ShirahaYuki  shirhayuki2002@gmail.com
  * @Date: 2026-02-05 19:45:29
  * @LastEditors: ShirahaYuki  shirhayuki2002@gmail.com
- * @LastEditTime: 2026-02-06 14:17:57
- * @FilePath: /starry-project/packages/core/app.ts
+ * @LastEditTime: 2026-02-07 20:45:30
+ * @FilePath: /virid/packages/core/app.ts
  * @Description:app实例
  *
  * Copyright (c) 2026 by ShirahaYuki, All Rights Reserved.
@@ -26,7 +26,11 @@ import {
   Middleware,
   WarnMessage,
 } from "./message";
-import { type ViridPlugin } from "./types";
+
+export interface ViridPlugin<T = any> {
+  name: string;
+  install: (app: ViridApp, options: T) => void;
+}
 
 // 维护一个已安装插件的列表，防止重复安装
 const installedPlugins = new Set<string>();
@@ -40,7 +44,7 @@ export class ViridApp {
   private bindBase<T>(identifier: new (...args: any[]) => T) {
     return this.container.bind<T>(identifier).toSelf();
   }
-  public get(identifier: any) {
+  get(identifier: any) {
     return this.container.get(identifier);
   }
 
@@ -80,7 +84,7 @@ export class ViridApp {
       priority,
     );
   }
-  use(plugin: ViridPlugin, options: any) {
+  use<T>(plugin: ViridPlugin<T>, options: T): this {
     if (installedPlugins.has(plugin.name)) {
       MessageWriter.warn(
         `[Virid Plugin] Plugin ${plugin.name} has already been installed.`,
@@ -91,7 +95,10 @@ export class ViridApp {
       plugin.install(this, options);
       installedPlugins.add(plugin.name);
     } catch (e) {
-      MessageWriter.error(e as Error, `[Virid Plugin] ${plugin.name}`);
+      MessageWriter.error(
+        e as Error,
+        `[Virid Plugin]: Install Faild: ${plugin.name}`,
+      );
     }
     return this;
   }

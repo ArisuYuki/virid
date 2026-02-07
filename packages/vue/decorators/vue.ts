@@ -8,7 +8,7 @@
  *
  * Copyright (c) 2026 by ShirahaYuki, All Rights Reserved.
  */
-import { virid_METADATA } from "./constants";
+import { VIRID_METADATA } from "./constants";
 import type { WatchOptions } from "vue";
 import { ControllerMessage } from "./types";
 
@@ -33,7 +33,7 @@ export function Watch<C>(
 // 实现逻辑
 export function Watch(arg1: any, arg2?: any, arg3?: any) {
   return (target: any, methodName: string) => {
-    const existing = Reflect.getMetadata(virid_METADATA.WATCH, target) || [];
+    const existing = Reflect.getMetadata(VIRID_METADATA.WATCH, target) || [];
 
     if (typeof arg2 === "function") {
       // 重载 2: Watch(Component, (c) => c.prop, options)
@@ -54,7 +54,7 @@ export function Watch(arg1: any, arg2?: any, arg3?: any) {
       });
     }
 
-    Reflect.defineMetadata(virid_METADATA.WATCH, existing, target);
+    Reflect.defineMetadata(VIRID_METADATA.WATCH, existing, target);
   };
 }
 /**
@@ -77,7 +77,7 @@ export function Project(arg1: any, arg2?: any) {
     propertyKey: string,
     descriptor?: PropertyDescriptor,
   ) => {
-    const existing = Reflect.getMetadata(virid_METADATA.PROJECT, target) || [];
+    const existing = Reflect.getMetadata(VIRID_METADATA.PROJECT, target) || [];
 
     const metadata = {
       propertyKey,
@@ -89,7 +89,7 @@ export function Project(arg1: any, arg2?: any) {
     };
 
     existing.push(metadata);
-    Reflect.defineMetadata(virid_METADATA.PROJECT, existing, target);
+    Reflect.defineMetadata(VIRID_METADATA.PROJECT, existing, target);
   };
 }
 /**
@@ -99,9 +99,9 @@ export function Project(arg1: any, arg2?: any) {
 export function Responsive(shallow = false) {
   return (target: any, propertyKey: string) => {
     // 记录哪些属性需要变成响应式
-    const props = Reflect.getMetadata(virid_METADATA.RESPONSIVE, target) || [];
+    const props = Reflect.getMetadata(VIRID_METADATA.RESPONSIVE, target) || [];
     props.push({ propertyKey, shallow });
-    Reflect.defineMetadata(virid_METADATA.RESPONSIVE, props, target);
+    Reflect.defineMetadata(VIRID_METADATA.RESPONSIVE, props, target);
   };
 }
 
@@ -120,9 +120,9 @@ export function OnHook(
 ) {
   return (target: any, methodName: string) => {
     const existing =
-      Reflect.getMetadata(virid_METADATA.LIFE_CRICLE, target) || [];
+      Reflect.getMetadata(VIRID_METADATA.LIFE_CRICLE, target) || [];
     existing.push({ hookName, methodName });
-    Reflect.defineMetadata(virid_METADATA.LIFE_CRICLE, existing, target);
+    Reflect.defineMetadata(VIRID_METADATA.LIFE_CRICLE, existing, target);
   };
 }
 /**
@@ -132,9 +132,9 @@ export function OnHook(
 export function Use(hookFactory: () => any) {
   return (target: any, propertyKey: string) => {
     const existing =
-      Reflect.getMetadata(virid_METADATA.USE_HOOKS, target) || [];
+      Reflect.getMetadata(VIRID_METADATA.USE_HOOKS, target) || [];
     existing.push({ propertyKey, hookFactory });
-    Reflect.defineMetadata(virid_METADATA.USE_HOOKS, existing, target);
+    Reflect.defineMetadata(VIRID_METADATA.USE_HOOKS, existing, target);
   };
 }
 /**
@@ -147,9 +147,9 @@ export function Inherit<T>(
   selector?: (instance: T) => any,
 ) {
   return (target: any, propertyKey: string) => {
-    const metadata = Reflect.getMetadata(virid_METADATA.INHERIT, target) || [];
+    const metadata = Reflect.getMetadata(VIRID_METADATA.INHERIT, target) || [];
     metadata.push({ propertyKey, token, id, selector });
-    Reflect.defineMetadata(virid_METADATA.INHERIT, metadata, target);
+    Reflect.defineMetadata(VIRID_METADATA.INHERIT, metadata, target);
   };
 }
 
@@ -175,7 +175,7 @@ export function Listener<T extends ControllerMessage>(
   return (target: any, propertyKey: string) => {
     // 获取该 Controller 原型上已有的监听器元数据
     const listeners =
-      Reflect.getMetadata(virid_METADATA.CONTROLLER_LISTENERS, target) || [];
+      Reflect.getMetadata(VIRID_METADATA.CONTROLLER_LISTENERS, target) || [];
 
     // 存入当前方法的配置：哪个方法(propertyKey) 听 哪个消息(eventClass)
     listeners.push({
@@ -187,7 +187,7 @@ export function Listener<T extends ControllerMessage>(
 
     // 将元数据重新定义回类原型，供 useController 在实例化时扫描
     Reflect.defineMetadata(
-      virid_METADATA.CONTROLLER_LISTENERS,
+      VIRID_METADATA.CONTROLLER_LISTENERS,
       listeners,
       target,
     );

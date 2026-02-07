@@ -2,15 +2,15 @@
  * @Author: ShirahaYuki  shirhayuki2002@gmail.com
  * @Date: 2026-01-31 16:17:36
  * @LastEditors: ShirahaYuki  shirhayuki2002@gmail.com
- * @LastEditTime: 2026-02-06 14:18:34
- * @FilePath: /starry-project/packages/core/decorators/ccs.ts
+ * @LastEditTime: 2026-02-07 12:40:34
+ * @FilePath: /virid/packages/core/decorators/ccs.ts
  * @Description: ccs核心魔法装饰器
  *
  * Copyright (c) 2026 by ShirahaYuki, All Rights Reserved.
  */
 import { viridApp } from "../app";
 import { BaseMessage, MessageWriter } from "../message";
-import { virid_METADATA } from "./constants";
+import { VIRID_METADATA } from "./constants";
 import { injectable } from "inversify";
 import {
   CCSSystemContext,
@@ -34,7 +34,7 @@ export function System(priority: number = 0) {
       );
     }
     const readerConfigs: { index: number; eventClass: any; single: boolean }[] =
-      Reflect.getMetadata(virid_METADATA.MESSAGE, target, key) || [];
+      Reflect.getMetadata(VIRID_METADATA.MESSAGE, target, key) || [];
     //不允许有多个Configs,只能由一种Message触发
     if (readerConfigs.length > 1) {
       MessageWriter.warn(
@@ -140,10 +140,25 @@ export function Message<T extends BaseMessage>(
 ) {
   return (target: any, key: string, index: number) => {
     const configs =
-      Reflect.getMetadata(virid_METADATA.MESSAGE, target, key) || [];
+      Reflect.getMetadata(VIRID_METADATA.MESSAGE, target, key) || [];
     // 存储元数据：哪个参数索引，对应哪个消息类
     configs.push({ index, eventClass, single });
-    Reflect.defineMetadata(virid_METADATA.MESSAGE, configs, target, key);
+    Reflect.defineMetadata(VIRID_METADATA.MESSAGE, configs, target, key);
+  };
+}
+
+/**
+ * @description: 标识controller或者组件的方法是否是安全的，可被其他controller直接调用
+ */
+export function Safe() {
+  return (target: any, key: string, descriptor: PropertyDescriptor) => {
+    // 标识这个方法是“只读安全”的
+    // 只需要标记这个 key
+    const safeMethods =
+      Reflect.getMetadata(VIRID_METADATA.SAFE, target) || new Set<string>();
+    safeMethods.add(key);
+    // 存回到 prototype
+    Reflect.defineMetadata(VIRID_METADATA.SAFE, safeMethods, target);
   };
 }
 
@@ -155,7 +170,7 @@ export function Controller() {
     // 1. 依然要保持它可被依赖注入
     injectable()(target);
     // 2. 打上身份标签
-    Reflect.defineMetadata(virid_METADATA.CONTROLLER, true, target);
+    Reflect.defineMetadata(VIRID_METADATA.CONTROLLER, true, target);
   };
 }
 /**
@@ -165,6 +180,6 @@ export function Component() {
   return (target: any) => {
     injectable()(target);
     // 打上组件标签
-    Reflect.defineMetadata(virid_METADATA.COMPONENT, true, target);
+    Reflect.defineMetadata(VIRID_METADATA.COMPONENT, true, target);
   };
 }

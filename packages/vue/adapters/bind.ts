@@ -2,13 +2,13 @@
  * @Author: ShirahaYuki  shirhayuki2002@gmail.com
  * @Date: 2026-02-03 11:05:48
  * @LastEditors: ShirahaYuki  shirhayuki2002@gmail.com
- * @LastEditTime: 2026-02-06 11:34:00
- * @FilePath: /virid-project/packages/vue/adapters/bind.ts
+ * @LastEditTime: 2026-02-07 12:48:11
+ * @FilePath: /virid/packages/vue/adapters/bind.ts
  * @Description: hook绑定适配器，用于处理各种魔法装饰器的绑定逻辑
  *
  * Copyright (c) 2026 by ShirahaYuki, All Rights Reserved.
  */
-import { virid_METADATA } from "../decorators/constants";
+import { VIRID_METADATA } from "../decorators/constants";
 import {
   watch,
   computed,
@@ -68,7 +68,7 @@ export function bindProject(
   instance: any,
   rawDeps: Record<string, any>,
 ) {
-  const projects = Reflect.getMetadata(virid_METADATA.PROJECT, proto);
+  const projects = Reflect.getMetadata(VIRID_METADATA.PROJECT, proto);
 
   projects?.forEach((config: any) => {
     const { propertyKey, isAccessor, type, componentClass, source } = config;
@@ -153,7 +153,7 @@ export function bindProject(
  */
 
 export function bindWatch(proto: any, instance: any) {
-  const watches: any[] = Reflect.getMetadata(virid_METADATA.WATCH, proto) || [];
+  const watches: any[] = Reflect.getMetadata(VIRID_METADATA.WATCH, proto) || [];
   const stops: WatchStopHandle[] = [];
 
   watches.forEach((config) => {
@@ -210,7 +210,7 @@ export function bindResponsive(instance: any) {
   });
 
   // 偷梁换柱
-  const props = Reflect.getMetadata(virid_METADATA.RESPONSIVE, instance) || [];
+  const props = Reflect.getMetadata(VIRID_METADATA.RESPONSIVE, instance) || [];
   // 先将当前层级的所有属性Ref化
   props.forEach((config: any) => {
     const key = config.propertyKey;
@@ -252,8 +252,11 @@ export function createDeepShield(
   rootName: string,
   path: string = "",
 ): any {
-  // 基本类型直接返回
-  if (target === null || typeof target !== "object") {
+  // 基本类型处理
+  if (
+    target === null ||
+    (typeof target !== "object" && typeof target !== "function")
+  ) {
     return target;
   }
 
@@ -264,12 +267,42 @@ export function createDeepShield(
     get(obj, prop) {
       // 内部标识，用于识别是否已被包装
       if (prop === "__ccs_shield__") return true;
-      // 允许访问原始对象（仅限框架内部使用，可用 Symbol 隐藏）
+      // 允许访问原始对象（仅限框架内部使用）
       if (prop === "__raw__") return obj;
 
       const value = Reflect.get(obj, prop);
       const currentPath = path ? `${path}.${String(prop)}` : String(prop);
+      // 函数拦截
+      if (typeof value === "function") {
+        return (...args: any[]) => {
+          // 检查该方法是否有 @Safe 标记
+          // target 可能是实例，元数据通常存在 constructor.prototype 上
+          const safeMethods =
+            Reflect.getMetadata(
+              VIRID_METADATA.SAFE,
+              obj.constructor?.prototype,
+            ) || new Set();
 
+          if (!safeMethods.has(prop)) {
+            const errorMsg = [
+              `[Virid Security Violation]`,
+              `------------------------------------------------`,
+              `Location: ${rootName}.${currentPath}()`,
+              `Status: BLOCKED`,
+              `Reason: This method is NOT marked with @Safe.`,
+              `Constraint: In Virid, UI/Controller can only call READ-ONLY(Safe) methods.`,
+              `------------------------------------------------`,
+            ].join("\n");
+            MessageWriter.error(new Error(errorMsg));
+            return null; // 拒绝执行
+          }
+
+          // 安全执行：如果是 Safe 的，执行它
+          const result = value.apply(obj, args);
+          // 对返回值递归套盾
+          return createDeepShield(result, rootName, `${currentPath}()`);
+        };
+      }
       // 自动给子对象也穿上护盾
       return createDeepShield(value, rootName, currentPath);
     },
@@ -279,7 +312,7 @@ export function createDeepShield(
 
       // 优雅地失败，并给出修复建议
       const errorMsg = [
-        `[Virid DeepShield]`,
+        `[Virid Security Violation]`,
         `------------------------------------------------`,
         `Component: ${rootName}`,
         `Code: this.${rootName}.${currentPath}`,
@@ -316,7 +349,7 @@ export function createDeepShield(
  * 解析 @OnHook 并将其绑定到 Vue 生命周期
  */
 export function bindHooks(proto: any, instance: any) {
-  const hooks = Reflect.getMetadata(virid_METADATA.LIFE_CRICLE, proto);
+  const hooks = Reflect.getMetadata(VIRID_METADATA.LIFE_CRICLE, proto);
 
   hooks?.forEach((config: any) => {
     const { hookName, methodName } = config;
@@ -350,7 +383,7 @@ export function bindHooks(proto: any, instance: any) {
  * 执行并绑定万能 Hooks
  */
 export function bindUseHooks(proto: any, instance: any) {
-  const hooks = Reflect.getMetadata(virid_METADATA.USE_HOOKS, proto);
+  const hooks = Reflect.getMetadata(VIRID_METADATA.USE_HOOKS, proto);
 
   hooks?.forEach((config: any) => {
     // 在 useController 运行期间执行 hookFactory()
@@ -365,7 +398,7 @@ export function bindUseHooks(proto: any, instance: any) {
  **/
 export function bindListener(proto: any, instance: any): (() => void)[] {
   const listenerConfigs: any[] =
-    Reflect.getMetadata(virid_METADATA.CONTROLLER_LISTENERS, proto) || [];
+    Reflect.getMetadata(VIRID_METADATA.CONTROLLER_LISTENERS, proto) || [];
   const unbindFunctions: (() => void)[] = [];
 
   listenerConfigs.forEach(({ propertyKey, eventClass, priority, single }) => {
@@ -402,7 +435,7 @@ export function bindListener(proto: any, instance: any): (() => void)[] {
  * @description: 启动@Inherit 使能够只读其他的controller
  **/
 export function bindInherit(proto: any, instance: any) {
-  const inherits = Reflect.getMetadata(virid_METADATA.INHERIT, proto);
+  const inherits = Reflect.getMetadata(VIRID_METADATA.INHERIT, proto);
   if (!inherits) return;
 
   // @ts-ignore : token

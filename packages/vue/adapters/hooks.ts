@@ -20,7 +20,7 @@ import {
   bindInherit,
 } from "./bind";
 import { onUnmounted, useAttrs } from "vue";
-import { virid_METADATA } from "../decorators/constants";
+import { VIRID_METADATA } from "../decorators/constants";
 import { MessageWriter } from "@virid/core";
 import { viridApp } from "../app";
 /**
@@ -43,14 +43,14 @@ export function useController<T>(
   }
 
   // 检查身份 Controller
-  const isController = Reflect.hasMetadata(virid_METADATA.CONTROLLER, token);
+  const isController = Reflect.hasMetadata(VIRID_METADATA.CONTROLLER, token);
   // 建立真身仓库 (此时 instance 里的 service 还是干净的原始对象)
   const rawDeps: Record<string, any> = {};
   if (isController) {
     Object.keys(instance).forEach((key) => {
       const dep = (instance as any)[key];
       if (dep && typeof dep === "object" && dep.constructor) {
-        if (Reflect.hasMetadata(virid_METADATA.COMPONENT, dep.constructor)) {
+        if (Reflect.hasMetadata(VIRID_METADATA.COMPONENT, dep.constructor)) {
           rawDeps[key] = dep; // 存下真身
         }
       }

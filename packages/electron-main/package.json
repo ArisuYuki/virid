@@ -1,0 +1,31 @@
+{
+  "name": "@virid/electron-main",
+  "version": "0.0.1",
+  "description": "Electron main process adapter for Virid, responsible for sending, receiving, and broadcasting rendering process messages",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "@virid/core": "workspace:*"
+  },
+  "peerDependencies": {
+    "electron": "^40.2.1"
+  },
+  "scripts": {
+    "build": "tsup index.ts --format esm,cjs --dts --clean --external electron --external @virid/core"
+  }
+}
