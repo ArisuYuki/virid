@@ -2,8 +2,8 @@
  * @Author: ShirahaYuki  shirhayuki2002@gmail.com
  * @Date: 2026-02-03 09:34:30
  * @LastEditors: ShirahaYuki  shirhayuki2002@gmail.com
- * @LastEditTime: 2026-02-06 11:22:30
- * @FilePath: /virid-project/packages/core/message/internal.ts
+ * @LastEditTime: 2026-02-08 15:50:01
+ * @FilePath: /virid/packages/core/src/core/internal.ts
  * @Description:消息系统内部维护的一些状态
  *
  * Copyright (c) 2026 by ShirahaYuki, All Rights Reserved.
@@ -52,17 +52,17 @@ export class MessageInternal {
    * 消息进入系统的唯一入口
    */
   dispatch(message: BaseMessage) {
-    //先看看这个消息的处理函数在this.interestMap里有吗？没有就报错
-    if (!this.registry.interestMap.has(message.constructor)) {
-      MessageWriter.error(
-        new Error(
-          `[Virid Dispatch] No handler for message: ${message.constructor.name}`,
-        ),
-      );
-      return;
-    }
     // 运行中间件管道
     this.pipeline(message, () => {
+      //看看这个消息的处理函数在this.interestMap里有吗？没有就报错
+      if (!this.registry.interestMap.has(message.constructor)) {
+        MessageWriter.error(
+          new Error(
+            `[Virid Dispatch] No handler for message: ${message.constructor.name}`,
+          ),
+        );
+        return;
+      }
       // 存入 Hub (根据 Single/Event 策略存入不同池子)
       this.eventHub.push(message);
 

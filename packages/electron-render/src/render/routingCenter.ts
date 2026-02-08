@@ -2,20 +2,28 @@
  * @Author: ShirahaYuki  shirhayuki2002@gmail.com
  * @Date: 2026-02-07 16:57:38
  * @LastEditors: ShirahaYuki  shirhayuki2002@gmail.com
- * @LastEditTime: 2026-02-07 21:15:52
- * @FilePath: /virid/packages/electron-render/render/registerMap.ts
+ * @LastEditTime: 2026-02-08 14:47:52
+ * @FilePath: /virid/packages/electron-render/src/render/routingCenter.ts
  * @Description: 转发中心
  *
  * Copyright (c) 2026 by ShirahaYuki, All Rights Reserved.
  */
 import { MessageWriter } from "@virid/core";
-import { RenderRequestMessage } from "./types";
-let REGISTER_MAP = new Map<string, any>();
+import { type FromMainMessage } from "./types";
+let MESSAGE_MAP = new Map<string, new (...args: any[]) => FromMainMessage>();
 
-export function register(renderMap: Map<string, any>) {
-  REGISTER_MAP = renderMap;
+export function registerMessage(
+  registerMap:
+    | Record<string, new (...args: any[]) => FromMainMessage>
+    | Map<string, new (...args: any[]) => FromMainMessage>,
+): void {
+  if (registerMap instanceof Map) {
+    MESSAGE_MAP = registerMap;
+  } else {
+    // 如果是普通对象，转换成 Map
+    MESSAGE_MAP = new Map(Object.entries(registerMap));
+  }
 }
-
 export function convertToMainMessage(ipcMessage: any): void {
   // 解构
   const { __virid_source, __virid_target, __virid_messageType, payload } =
@@ -28,9 +36,7 @@ export function convertToMainMessage(ipcMessage: any): void {
     );
     return;
   }
-  // 找到对应的构造函数
-  const MessageClass = REGISTER_MAP.get(__virid_messageType);
-  if (!MessageClass) {
+  if (!MESSAGE_MAP.has(__virid_messageType)) {
     MessageWriter.error(
       new Error(
         `[Virid Electron-Render] Unregistered type: ${__virid_messageType} `,
@@ -38,27 +44,20 @@ export function convertToMainMessage(ipcMessage: any): void {
     );
     return;
   }
-
-  // 实例化与注塑
-  const instance = new (MessageClass as any)();
-  // 不能套娃重新发送一个
-  if (instance instanceof RenderRequestMessage) {
-    MessageWriter.error(
-      new Error(
-        `[Virid Electron-Render] Prohibition Of Conversion:\nProhibit registering the type ${MessageClass} in the conversion table`,
-      ),
-    );
-    return;
-  }
-  // 还原数据
-  if (payload) {
-    Object.assign(instance, payload);
-  }
+  // 找到对应的构造函数
+  const MessageClass = MESSAGE_MAP.get(__virid_messageType)!;
+  // 实例化并注入参数
+  const instance = new MessageClass();
 
   // 显式赋值基类标识，确保实例的身份信息完整
   instance.__virid_source = __virid_source;
   instance.__virid_target = __virid_target;
   instance.__virid_messageType = __virid_messageType;
+
+  // 还原数据
+  if (payload) {
+    Object.assign(instance, payload);
+  }
 
   // 重新分发
   MessageWriter.write(instance);

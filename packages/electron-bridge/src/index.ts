@@ -2,7 +2,7 @@
  * @Author: ShirahaYuki  shirhayuki2002@gmail.com
  * @Date: 2026-02-05 20:08:55
  * @LastEditors: ShirahaYuki  shirhayuki2002@gmail.com
- * @LastEditTime: 2026-02-07 17:04:22
+ * @LastEditTime: 2026-02-07 21:48:08
  * @FilePath: /virid/packages/electron-bridge/index.ts
  * @Description: 安装virid 的electron-bridge
  *

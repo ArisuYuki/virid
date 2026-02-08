@@ -2,21 +2,17 @@
  * @Author: ShirahaYuki  shirhayuki2002@gmail.com
  * @Date: 2026-01-31 16:17:36
  * @LastEditors: ShirahaYuki  shirhayuki2002@gmail.com
- * @LastEditTime: 2026-02-07 12:40:34
- * @FilePath: /virid/packages/core/decorators/ccs.ts
+ * @LastEditTime: 2026-02-08 12:30:10
+ * @FilePath: /virid/packages/core/src/decorators/ccs.ts
  * @Description: ccs核心魔法装饰器
  *
  * Copyright (c) 2026 by ShirahaYuki, All Rights Reserved.
  */
 import { viridApp } from "../app";
-import { BaseMessage, MessageWriter } from "../message";
+import { BaseMessage, MessageWriter } from "../core";
 import { VIRID_METADATA } from "./constants";
 import { injectable } from "inversify";
-import {
-  CCSSystemContext,
-  EventMessage,
-  SingleMessage,
-} from "../message/types";
+import { CCSSystemContext, EventMessage, SingleMessage } from "../core/types";
 import "reflect-metadata";
 /**
  * @description: 系统装饰器

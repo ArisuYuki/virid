@@ -2,8 +2,8 @@
  * @Author: ShirahaYuki  shirhayuki2002@gmail.com
  * @Date: 2026-02-05 19:45:29
  * @LastEditors: ShirahaYuki  shirhayuki2002@gmail.com
- * @LastEditTime: 2026-02-07 20:45:30
- * @FilePath: /virid/packages/core/app.ts
+ * @LastEditTime: 2026-02-08 12:59:51
+ * @FilePath: /virid/packages/core/src/app.ts
  * @Description:app实例
  *
  * Copyright (c) 2026 by ShirahaYuki, All Rights Reserved.
@@ -14,7 +14,6 @@ import {
   BindWhenOnFluentSyntax,
   Container,
 } from "inversify";
-import { MessageInternal } from "./message/internal";
 import {
   AtomicModifyMessage,
   BaseMessage,
@@ -25,7 +24,8 @@ import {
   MessageWriter,
   Middleware,
   WarnMessage,
-} from "./message";
+  MessageInternal,
+} from "./core";
 
 export interface ViridPlugin<T = any> {
   name: string;
@@ -37,7 +37,6 @@ const installedPlugins = new Set<string>();
 /**
  * 创建 virid 核心实例
  */
-
 export class ViridApp {
   public container: Container = new Container();
   private messageInternal: MessageInternal = new MessageInternal();
@@ -109,7 +108,7 @@ export const viridApp = new ViridApp();
 //---------------------------------------------注册几个默认的处理函数---------------------------------------
 
 /**
- * 助手函数：为全局处理器包装上下文
+ * 为全局处理器包装上下文
  */
 function withContext(
   params: any,
@@ -127,7 +126,7 @@ function withContext(
 }
 
 /**
- * 简单的色彩辅助函数 (零依赖)
+ * 简单的色彩辅助函数
  */
 const clr = {
   reset: "\x1b[0m",
@@ -181,8 +180,7 @@ viridApp.register(
 );
 
 /**
- * 注册全局原子修改处理器
- * 它是整个架构中唯一允许直接操作 raw 数据的“合法特权区”
+ * 注册修改处理器
  */
 const atomicModifyHandler = (modifications: AtomicModifyMessage<any>) => {
   // 从 Registry 拿到未经 Proxy 劫持的原始对象 (Raw)

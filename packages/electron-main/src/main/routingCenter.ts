@@ -1,20 +1,27 @@
 import { MessageWriter } from "@virid/core";
-import { MainRequestMessage } from "./types";
 import { BrowserWindow } from "electron";
-export const WINDOWS_MAP = new Map<string, BrowserWindow>();
-let REGISTER_MESSAGE_MAP = new Map<string, any>();
+import { type FromRenderMessage } from "./types";
 export const VIRID_CHANNEL = "VIRID_INTERNAL_BUS";
-export function registerMessage(registerMap: Map<string, any>): void {
-  REGISTER_MESSAGE_MAP = registerMap;
-}
+export const ROUTER_MAP = new Map<string, BrowserWindow>();
+let MESSAGE_MAP = new Map<string, any>();
 
+export function registerMessage(
+  registerMap:
+    | Record<string, new (...args: any[]) => FromRenderMessage>
+    | Map<string, new (...args: any[]) => FromRenderMessage>,
+): void {
+  if (registerMap instanceof Map) {
+    MESSAGE_MAP = registerMap;
+  } else {
+    // 如果是普通对象，转换成 Map
+    MESSAGE_MAP = new Map(Object.entries(registerMap));
+  }
+}
 //主进程接收消息并发给自己的system
 function ReceiveMessages(message: any): void {
   const { __virid_source, __virid_messageType, __virid_target, payload } =
     message;
-  // 查找主进程注册的消息类
-  const MessageClass = REGISTER_MESSAGE_MAP.get(__virid_messageType);
-  if (!MessageClass) {
+  if (!MESSAGE_MAP.has(__virid_messageType)) {
     // 主进程没注册这个消息,直接报错
     MessageWriter.error(
       new Error(
@@ -23,18 +30,10 @@ function ReceiveMessages(message: any): void {
     );
     return;
   }
+  // 查找主进程注册的消息类
+  const MessageClass = MESSAGE_MAP.get(__virid_messageType);
   // 实例化
   let instance = new (MessageClass as any)();
-  // 不能重新发一个MainMessage，避免套娃
-  if (instance instanceof MainRequestMessage) {
-    MessageWriter.error(
-      new Error(
-        `[Virid Electron-Main] Prohibition Of Conversion:\nProhibit registering the type ${MessageClass} in the conversion table`,
-      ),
-    );
-    return;
-  }
-
   // 数据还原
   if (payload) {
     Object.assign(instance, payload);
@@ -44,7 +43,7 @@ function ReceiveMessages(message: any): void {
   instance.__virid_target = __virid_target;
   instance.__virid_messageType = __virid_messageType;
   // 注入物理上下文
-  const context = WINDOWS_MAP.get(__virid_source);
+  const context = ROUTER_MAP.get(__virid_source);
   if (context) {
     instance.senderWindow = context;
   }
@@ -57,7 +56,7 @@ function TransmitMessages(message: any): void {
   const { __virid_source, __virid_messageType, __virid_target, payload } =
     message;
   // 查找主进程注册的消息类
-  const targetWindow = WINDOWS_MAP.get(__virid_target);
+  const targetWindow = ROUTER_MAP.get(__virid_target);
   if (!targetWindow) {
     // 主进程没注册这个消息,直接报错
     MessageWriter.error(
@@ -77,7 +76,7 @@ function TransmitMessages(message: any): void {
 function broadcastMessage(message: any) {
   const { __virid_source, __virid_messageType, __virid_target, payload } =
     message;
-  WINDOWS_MAP.forEach((window) => {
+  ROUTER_MAP.forEach((window) => {
     window.webContents.send(VIRID_CHANNEL, {
       __virid_source,
       __virid_messageType,

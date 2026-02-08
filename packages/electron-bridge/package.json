@@ -2,6 +2,17 @@
   "name": "@virid/electron-bridge",
   "version": "0.0.1",
   "description": "Electron application preloading script",
+  "license": "MIT",
+  "author": "ShirahaYuki",
+  "keywords": [
+    "electron",
+    "virid",
+    "preload"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ArisuYuki/virid.git"
+  },
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -9,20 +20,23 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "require": "./dist/index.js",
+      "default": "./dist/index.mjs"
     }
-  },
-  "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org/"
   },
   "files": [
     "dist"
   ],
-  "peerDependencies": {
-    "electron": "^40.2.1"
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
-    "build": "tsup index.ts --format esm,cjs --dts --clean --external electron"
+    "build": "tsup --config tsup.config.ts",
+    "dev": "tsup --config tsup.config.ts --watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "electron": "^40.2.1"
   }
 }

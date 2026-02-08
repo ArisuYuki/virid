@@ -1,16 +1,10 @@
 {
-    "include": [
-        "./global.d.ts"
-    ],
     "compilerOptions": {
         "baseUrl": ".",
         "paths": {
             "@virid/core": [
                 "packages/core/index.ts"
             ],
-            "@virid/vue": [
-                "packages/vue/index.ts"
-            ]
         },
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,

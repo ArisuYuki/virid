@@ -2,8 +2,8 @@
  * @Author: ShirahaYuki  shirhayuki2002@gmail.com
  * @Date: 2026-02-03 09:57:20
  * @LastEditors: ShirahaYuki  shirhayuki2002@gmail.com
- * @LastEditTime: 2026-02-06 10:51:14
- * @FilePath: /virid-project/packages/core/message/types.ts
+ * @LastEditTime: 2026-02-08 14:59:39
+ * @FilePath: /virid/packages/core/src/core/types.ts
  * @Description:  消息类型定义
  *
  * Copyright (c) 2026 by ShirahaYuki, All Rights Reserved.
@@ -18,7 +18,6 @@ export abstract class BaseMessage {
     ...args: ConstructorParameters<T>
   ) {
     // 实例化并传递给 Writer
-    // 注意：这里需要根据你的 MessageWriter.write 实现来决定是传类还是传实例
     MessageWriter.write(this as any, ...args);
   }
   public senderInfo?: {

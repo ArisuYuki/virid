@@ -2,6 +2,19 @@
   "name": "@virid/vue",
   "version": "0.0.1",
   "description": "Vue adapter for virid, projecting logic sovereignty to reactive UI",
+  "author": "ShirahaYuki",
+  "license": "MIT",
+  "keywords": [
+    "virid",
+    "vue",
+    "adapter",
+    "di",
+    "reactive"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ArisuYuki/virid.git"
+  },
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -9,29 +22,25 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "require": "./dist/index.js",
+      "default": "./dist/index.mjs"
     }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup --config tsup.config.ts",
+    "dev": "tsup --config tsup.config.ts --watch",
+    "typecheck": "tsc --noEmit"
   },
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "files": [
-    "dist"
-  ],
-  "dependencies": {
-    "@virid/core": "workspace:*"
-  },
+  "dependencies": {},
   "peerDependencies": {
-    "vue": "^3.0.0",
-    "inversify": "^7.11.0"
-  },
-  "peerDependenciesMeta": {
-    "inversify": {
-      "optional": true
-    }
-  },
-  "scripts": {
-    "build": "tsup index.ts --format esm,cjs --dts --clean --external vue --external @virid/core --external reflect-metadata --external inversify"
+    "@virid/core": "workspace:*",
+    "vue": "^3.5.0"
   }
 }

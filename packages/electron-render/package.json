@@ -1,7 +1,19 @@
 {
   "name": "@virid/electron-render",
   "version": "0.0.1",
-  "description": "Electron rendering processr adapter for virid, responsible for forwarding and receiving messages from the main process",
+  "description": "Electron render process adapter for virid, responsible for forwarding and receiving messages from the main process",
+  "author": "ShirahaYuki",
+  "license": "MIT",
+  "keywords": [
+    "electron",
+    "render",
+    "virid",
+    "message"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ArisuYuki/virid.git"
+  },
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -9,23 +21,24 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "require": "./dist/index.js",
+      "default": "./dist/index.mjs"
     }
-  },
-  "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org/"
   },
   "files": [
     "dist"
   ],
-  "dependencies": {
-    "@virid/core": "workspace:*"
-  },
-  "peerDependencies": {
-    "electron": "^40.2.1"
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
-    "build": "tsup index.ts --format esm,cjs --dts --clean --external electron --external @virid/core"
+    "build": "tsup --config tsup.config.ts",
+    "dev": "tsup --config tsup.config.ts --watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {},
+  "peerDependencies": {
+    "@virid/core": "workspace:*"
   }
 }

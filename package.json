@@ -2,18 +2,26 @@
   "name": "virid",
   "private": true,
   "packageManager": "pnpm@9.0.0",
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "build": "pnpm -r run build",
-    "dev": "pnpm -r run dev",
-    "clean": "rm -rf node_modules && pnpm -r exec rm -rf dist node_modules",
+    "build": "cross-env NODE_OPTIONS='' pnpm -r run build",
+    "dev": "cross-env NODE_OPTIONS='' pnpm -r run dev",
+    "clean": "pnpm -r exec rm -rf dist && rm -rf node_modules",
+    "clean:all": "pnpm clean && pnpm store prune",
+    "typecheck": "pnpm -r run typecheck",
+    "lint": "pnpm -r run lint -- --fix",
+    "test": "pnpm -r run test",
     "example": "pnpm --filter @virid/core run example"
   },
   "devDependencies": {
+    "@swc-node/register": "^1.11.1",
     "@swc/core": "^1.15.11",
-    "@swc/helpers": "^0.5.18",
-    "regenerator-runtime": "^0.14.1",
+    "cross-env": "^10.1.0",
+    "inversify": "^7.11.0",
+    "reflect-metadata": "^0.2.2",
     "tsup": "^8.5.1",
-    "typescript": "^5.0.0",
-    "reflect-metadata": "^0.2.2"
+    "typescript": "^5.9.3"
   }
 }
