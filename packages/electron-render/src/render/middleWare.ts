@@ -1,12 +1,7 @@
 /*
- * @Author: ShirahaYuki  shirhayuki2002@gmail.com
- * @Date: 2026-02-07 16:53:09
- * @LastEditors: ShirahaYuki  shirhayuki2002@gmail.com
- * @LastEditTime: 2026-02-08 13:51:05
- * @FilePath: /virid/packages/electron-render/src/render/middleWare.ts
- * @Description:中间件
- *
- * Copyright (c) 2026 by ShirahaYuki, All Rights Reserved.
+ * Copyright (c) 2026-present ShirahaYuki.
+ * Licensed under the Apache License, Version 2.0.
+ * Project: Virid Electron Renderer
  */
 import { type Middleware, MessageWriter } from "@virid/core";
 import { ToMainMessage } from "./types";

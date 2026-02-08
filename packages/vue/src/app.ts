@@ -1,13 +1,9 @@
 /*
- * @Author: ShirahaYuki  shirhayuki2002@gmail.com
- * @Date: 2026-02-05 21:53:13
- * @LastEditors: ShirahaYuki  shirhayuki2002@gmail.com
- * @LastEditTime: 2026-02-05 22:08:47
- * @FilePath: /virid-project/packages/vue/vue.ts
- * @Description:存储一个代理壳子
- *
- * Copyright (c) 2026 by ShirahaYuki, All Rights Reserved.
+ * Copyright (c) 2026-present ShirahaYuki.
+ * Licensed under the Apache License, Version 2.0.
+ * Project: Virid Vue
  */
+import { bindResponsive } from "./adapters/bind";
 export interface IviridApp {
   register(
     eventClass: any,
@@ -22,8 +18,8 @@ let activeApp: IviridApp | null = null;
 /**
  * 激活真正的 App 实例
  */
-export function activateApp(instance: IviridApp) {
-  activeApp = instance;
+export function activateApp(app: IviridApp) {
+  activeApp = app;
 }
 
 /**

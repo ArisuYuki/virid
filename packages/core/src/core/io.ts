@@ -1,12 +1,7 @@
 /*
- * @Author: ShirahaYuki  shirhayuki2002@gmail.com
- * @Date: 2026-02-03 09:59:36
- * @LastEditors: ShirahaYuki  shirhayuki2002@gmail.com
- * @LastEditTime: 2026-02-06 11:23:44
- * @FilePath: /virid-project/packages/core/message/io.ts
- * @Description:  消息读写器
- *
- * Copyright (c) 2026 by ShirahaYuki, All Rights Reserved.
+ * Copyright (c) 2026-present ShirahaYuki.
+ * Licensed under the Apache License, Version 2.0.
+ * Project: Virid Core
  */
 import { type MessageInternal } from "./internal";
 import { BaseMessage, ErrorMessage, WarnMessage } from "./types";

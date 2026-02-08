@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Electron render process adapter for virid, responsible for forwarding and receiving messages from the main process",
   "author": "ShirahaYuki",
-  "license": "MIT",
+  "license": "Apache 2.0",
   "keywords": [
     "electron",
     "render",

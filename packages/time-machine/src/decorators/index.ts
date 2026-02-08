@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 2026-present ShirahaYuki.
  * Licensed under the Apache License, Version 2.0.
- * Project: Virid Core
+ * Project: Virid Vue
  */
-export * from "./ccs";
+export * from "./decorators";
+export * from "./constants";

@@ -1,12 +1,7 @@
 /*
- * @Author: ShirahaYuki  shirhayuki2002@gmail.com
- * @Date: 2026-02-03 09:34:30
- * @LastEditors: ShirahaYuki  shirhayuki2002@gmail.com
- * @LastEditTime: 2026-02-08 15:50:01
- * @FilePath: /virid/packages/core/src/core/internal.ts
- * @Description:消息系统内部维护的一些状态
- *
- * Copyright (c) 2026 by ShirahaYuki, All Rights Reserved.
+ * Copyright (c) 2026-present ShirahaYuki.
+ * Licensed under the Apache License, Version 2.0.
+ * Project: Virid Core
  */
 import { Dispatcher } from "./dispatcher";
 import { EventHub } from "./eventHub";

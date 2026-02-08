@@ -1,12 +1,7 @@
 /*
- * @Author: ShirahaYuki  shirhayuki2002@gmail.com
- * @Date: 2026-02-05 21:53:13
- * @LastEditors: ShirahaYuki  shirhayuki2002@gmail.com
- * @LastEditTime: 2026-02-08 14:45:39
- * @FilePath: /virid/packages/electron-render/src/app.ts
- * @Description:插件定义
- *
- * Copyright (c) 2026 by ShirahaYuki, All Rights Reserved.
+ * Copyright (c) 2026-present ShirahaYuki.
+ * Licensed under the Apache License, Version 2.0.
+ * Project: Virid Electron Renderer
  */
 
 import { MessageWriter, type ViridApp } from "@virid/core";

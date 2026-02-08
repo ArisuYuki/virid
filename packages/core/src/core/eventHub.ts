@@ -1,14 +1,8 @@
 /*
- * @Author: ShirahaYuki  shirhayuki2002@gmail.com
- * @Date: 2026-01-31 19:35:14
- * @LastEditors: ShirahaYuki  shirhayuki2002@gmail.com
- * @LastEditTime: 2026-02-06 11:22:23
- * @FilePath: /virid-project/packages/core/message/eventHub.ts
- * @Description:消息管理中心
- *
- * Copyright (c) 2026 by ShirahaYuki, All Rights Reserved.
+ * Copyright (c) 2026-present ShirahaYuki.
+ * Licensed under the Apache License, Version 2.0.
+ * Project: Virid Core
  */
-
 import { MessageWriter } from "./io";
 import { EventMessage, SingleMessage } from "./types";
 

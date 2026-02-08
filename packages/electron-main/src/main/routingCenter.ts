@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026-present ShirahaYuki.
+ * Licensed under the Apache License, Version 2.0.
+ * Project: Virid Electron Main
+ */
 import { MessageWriter } from "@virid/core";
 import { BrowserWindow } from "electron";
 import { type FromRenderMessage } from "./types";

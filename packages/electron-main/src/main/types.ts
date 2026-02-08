@@ -1,16 +1,11 @@
 /*
- * @Author: ShirahaYuki  shirhayuki2002@gmail.com
- * @Date: 2026-02-05 21:28:16
- * @LastEditors: ShirahaYuki  shirhayuki2002@gmail.com
- * @LastEditTime: 2026-02-08 14:41:00
- * @FilePath: /virid/packages/electron-main/src/main/types.ts
- * @Description: 类型定义
- *
- * Copyright (c) 2026 by ShirahaYuki, All Rights Reserved.
+ * Copyright (c) 2026-present ShirahaYuki.
+ * Licensed under the Apache License, Version 2.0.
+ * Project: Virid Electron Main
  */
 import { EventMessage } from "@virid/core";
 import { type App } from "electron";
-export { type CCSSystemContext } from "@virid/core";
+export { type SystemContext } from "@virid/core";
 /**
  * description: 来自渲染进程的消息
  */
@@ -40,11 +35,11 @@ export abstract class ToRenderMessage extends EventMessage {
    * 'all': 广播给所有窗口（经过主进程中转）
    * string: 指定某个窗口的 ID (windowId)
    */
-  public __virid_target: string = "unknow";
+  public abstract __virid_target: string;
   /**
    * 我应该在目的地转变成什么消息？
    */
-  public __virid_messageType: string = "unknow";
+  public abstract __virid_messageType: string;
 }
 
 export interface PluginOption {

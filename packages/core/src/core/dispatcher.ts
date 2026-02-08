@@ -1,12 +1,7 @@
 /*
- * @Author: ShirahaYuki  shirhayuki2002@gmail.com
- * @Date: 2026-02-01 16:02:19
- * @LastEditors: ShirahaYuki  shirhayuki2002@gmail.com
- * @LastEditTime: 2026-02-06 11:22:07
- * @FilePath: /virid-project/packages/core/message/dispatcher.ts
- * @Description:事件调度中心
- *
- * Copyright (c) 2026 by ShirahaYuki, All Rights Reserved.
+ * Copyright (c) 2026-present ShirahaYuki.
+ * Licensed under the Apache License, Version 2.0.
+ * Project: Virid Core
  */
 /**
  * @description: 事件调度器
@@ -17,9 +12,10 @@ import {
   EventMessage,
   BaseMessage,
   Hook,
-  CCSSystemContext,
+  HookContext,
   SystemTask,
   MessageIdentifier,
+  SystemContext,
 } from "./types";
 import { EventHub } from "./eventHub";
 
@@ -28,7 +24,7 @@ export class ExecutionTask {
     public fn: (...args: any[]) => any,
     public priority: number,
     public message: any, // 运行时可能是 T 或 T[]
-    public context: CCSSystemContext,
+    public hookContext: HookContext,
   ) {}
 
   private triggerHooks(
@@ -40,7 +36,7 @@ export class ExecutionTask {
     for (const hook of hooks) {
       if (sample instanceof hook.type) {
         try {
-          const result = hook.handler(this.message, this.context);
+          const result = hook.handler(this.message, this.hookContext);
           if (result instanceof Promise) {
             result.catch((e) =>
               MessageWriter.error(
@@ -60,12 +56,18 @@ export class ExecutionTask {
   }
 
   public execute(
-    beforeHooks: Array<{ type: MessageIdentifier<any>; handler: Hook<any> }>,
-    afterHooks: Array<{ type: MessageIdentifier<any>; handler: Hook<any> }>,
+    beforeExecuteHooks: Array<{
+      type: MessageIdentifier<any>;
+      handler: Hook<any>;
+    }>,
+    afterExecuteHooks: Array<{
+      type: MessageIdentifier<any>;
+      handler: Hook<any>;
+    }>,
   ): any {
     //执行前置钩子
-    this.triggerHooks(beforeHooks);
-    const runAfter = () => this.triggerHooks(afterHooks);
+    this.triggerHooks(beforeExecuteHooks);
+    const runAfter = () => this.triggerHooks(afterExecuteHooks);
 
     try {
       const result = this.fn(this.message);
@@ -92,11 +94,11 @@ export class Dispatcher {
   private tickCount = 0;
   private eventHub: EventHub;
   // 使用 MessageIdentifier 允许存入 BaseMessage, SingleMessage 等抽象类
-  private beforeHooks: Array<{
+  private beforeExecuteHooks: Array<{
     type: MessageIdentifier<any>;
     handler: Hook<any>;
   }> = [];
-  private afterHooks: Array<{
+  private afterExecuteHooks: Array<{
     type: MessageIdentifier<any>;
     handler: Hook<any>;
   }> = [];
@@ -108,13 +110,13 @@ export class Dispatcher {
     type: MessageIdentifier<T>,
     hook: Hook<T>,
   ) {
-    this.beforeHooks.push({ type, handler: hook as Hook<any> });
+    this.beforeExecuteHooks.push({ type, handler: hook as Hook<any> });
   }
   public addAfter<T extends BaseMessage>(
     type: MessageIdentifier<T>,
     hook: Hook<T>,
   ) {
-    this.afterHooks.push({ type, handler: hook as Hook<any> });
+    this.afterExecuteHooks.push({ type, handler: hook as Hook<any> });
   }
   private cleanupHook: (types: Set<any>) => void = () => {};
 
@@ -177,12 +179,10 @@ export class Dispatcher {
           systems.forEach((s) => {
             //拿到Context
             tasks.push(
-              new ExecutionTask(
-                s.fn,
-                s.priority,
-                msg,
-                (s.fn as any).ccsContext,
-              ),
+              new ExecutionTask(s.fn, s.priority, msg, {
+                context: (s.fn as any).systemContext as SystemContext,
+                payload: {},
+              }),
             );
           });
         }
@@ -198,7 +198,10 @@ export class Dispatcher {
                   s.fn,
                   s.priority,
                   this.eventHub.peekSignal(type),
-                  (s.fn as any).ccsContext,
+                  {
+                    context: (s.fn as any).systemContext as SystemContext,
+                    payload: {},
+                  },
                 ),
               );
               signalFnSet.add(s.fn);
@@ -210,13 +213,16 @@ export class Dispatcher {
         // 执行任务流
         for (const task of tasks) {
           try {
-            const result = task.execute(this.beforeHooks, this.afterHooks);
+            const result = task.execute(
+              this.beforeExecuteHooks,
+              this.afterExecuteHooks,
+            );
             // 如果是 Promise，只管注册一个 catch 防止崩溃，不 await 它
             if (result instanceof Promise) {
               result.catch((e) =>
                 MessageWriter.error(
                   e,
-                  `[Virid Dispatcher] Async Error:\ntargetClass:${task.context.targetClass}\nmethodName:${task.context.methodName}
+                  `[Virid Dispatcher] Async Error:\ntargetClass:${task.hookContext.context.targetClass}\nmethodName:${task.hookContext.context.methodName}
                 `,
                 ),
               );
@@ -224,7 +230,7 @@ export class Dispatcher {
           } catch (e) {
             MessageWriter.error(
               e as Error,
-              `[Virid Dispatcher] Sync Error:\ntargetClass:${task.context.targetClass}\nmethodName:${task.context.methodName}
+              `[Virid Dispatcher] Sync Error:\ntargetClass:${task.hookContext.context.targetClass}\nmethodName:${task.hookContext.context.methodName}
                 `,
             );
           }

@@ -1,15 +1,8 @@
 /*
- * @Author: ShirahaYuki  shirhayuki2002@gmail.com
- * @Date: 2026-02-03 10:00:24
- * @LastEditors: ShirahaYuki  shirhayuki2002@gmail.com
- * @LastEditTime: 2026-02-06 11:23:57
- * @FilePath: /virid-project/packages/core/message/registry.ts
- * @Description:给消息的注册器，收集所有的system函数
- *
- * Copyright (c) 2026 by ShirahaYuki, All Rights Reserved.
+ * Copyright (c) 2026-present ShirahaYuki.
+ * Licensed under the Apache License, Version 2.0.
+ * Project: Virid Core
  */
-// ccs/message/registry.ts
-
 import { SystemTask } from "./types";
 import { MessageWriter } from "./io";
 

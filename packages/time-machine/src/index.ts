@@ -13,15 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Description: Electron render process adapter for virid, responsible for forwarding and receiving messages from the main process.
+ * Description: Add replay, redo, undo and other functions to virid.
  */
 import { ViridPlugin, type ViridApp } from "@virid/core";
-export { ToMainMessage, FromMainMessage } from "./render";
 import { activateApp } from "./app";
-import { type PluginOption } from "./render";
-export const RenderPlugin: ViridPlugin<PluginOption> = {
-  name: "@virid/electron-render",
-  install(app: ViridApp, options: PluginOption) {
-    activateApp(app, options);
+export const RenderPlugin: ViridPlugin<{}> = {
+  name: "@virid/time-machine",
+  install(app: ViridApp) {
+    activateApp(app);
   },
 };

@@ -1,18 +1,13 @@
 /*
- * @Author: ShirahaYuki  shirhayuki2002@gmail.com
- * @Date: 2026-01-31 16:17:36
- * @LastEditors: ShirahaYuki  shirhayuki2002@gmail.com
- * @LastEditTime: 2026-02-08 12:30:10
- * @FilePath: /virid/packages/core/src/decorators/ccs.ts
- * @Description: ccs核心魔法装饰器
- *
- * Copyright (c) 2026 by ShirahaYuki, All Rights Reserved.
+ * Copyright (c) 2026-present ShirahaYuki.
+ * Licensed under the Apache License, Version 2.0.
+ * Project: Virid Core
  */
 import { viridApp } from "../app";
 import { BaseMessage, MessageWriter } from "../core";
 import { VIRID_METADATA } from "./constants";
 import { injectable } from "inversify";
-import { CCSSystemContext, EventMessage, SingleMessage } from "../core/types";
+import { SystemContext, EventMessage, SingleMessage } from "../core/types";
 import "reflect-metadata";
 /**
  * @description: 系统装饰器
@@ -111,13 +106,13 @@ export function System(priority: number = 0) {
         : handleResult(result);
     };
     // 给包装后的函数挂载上下文信息（供 Dispatcher 读取）
-    const taskContext: CCSSystemContext = {
+    const systemContext: SystemContext = {
       params: types,
       targetClass: target,
       methodName: key,
       originalMethod: originalMethod,
     };
-    (wrappedSystem as any).ccsContext = taskContext;
+    (wrappedSystem as any).systemContext = systemContext;
     // 修改方法定义
     descriptor.value = wrappedSystem;
     // 注册到调度中心：每个监听的消息类都要关联这个包装函数

@@ -1,14 +1,8 @@
 /*
- * @Author: ShirahaYuki  shirhayuki2002@gmail.com
- * @Date: 2026-02-05 19:45:29
- * @LastEditors: ShirahaYuki  shirhayuki2002@gmail.com
- * @LastEditTime: 2026-02-08 12:59:51
- * @FilePath: /virid/packages/core/src/app.ts
- * @Description:app实例
- *
- * Copyright (c) 2026 by ShirahaYuki, All Rights Reserved.
+ * Copyright (c) 2026-present ShirahaYuki.
+ * Licensed under the Apache License, Version 2.0.
+ * Project: Virid Core
  */
-
 import {
   BindInWhenOnFluentSyntax,
   BindWhenOnFluentSyntax,
@@ -17,7 +11,7 @@ import {
 import {
   AtomicModifyMessage,
   BaseMessage,
-  CCSSystemContext,
+  SystemContext,
   ErrorMessage,
   Hook,
   MessageIdentifier,
@@ -115,7 +109,7 @@ function withContext(
   fn: (...args: any[]) => any,
   methodName: string,
 ) {
-  const context: CCSSystemContext = {
+  const context: SystemContext = {
     params: params, // 参数类型
     targetClass: Object, // 指向全局 Object 或特定标记类
     methodName: methodName,

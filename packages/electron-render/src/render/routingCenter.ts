@@ -1,12 +1,7 @@
 /*
- * @Author: ShirahaYuki  shirhayuki2002@gmail.com
- * @Date: 2026-02-07 16:57:38
- * @LastEditors: ShirahaYuki  shirhayuki2002@gmail.com
- * @LastEditTime: 2026-02-08 14:47:52
- * @FilePath: /virid/packages/electron-render/src/render/routingCenter.ts
- * @Description: 转发中心
- *
- * Copyright (c) 2026 by ShirahaYuki, All Rights Reserved.
+ * Copyright (c) 2026-present ShirahaYuki.
+ * Licensed under the Apache License, Version 2.0.
+ * Project: Virid Electron Renderer
  */
 import { MessageWriter } from "@virid/core";
 import { type FromMainMessage } from "./types";

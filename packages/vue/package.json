@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Vue adapter for virid, projecting logic sovereignty to reactive UI",
   "author": "ShirahaYuki",
-  "license": "MIT",
+  "license": "Apache 2.0",
   "keywords": [
     "virid",
     "vue",

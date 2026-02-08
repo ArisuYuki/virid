@@ -1,12 +1,7 @@
 /*
- * @Author: ShirahaYuki  shirhayuki2002@gmail.com
- * @Date: 2026-02-01 15:47:24
- * @LastEditors: ShirahaYuki  shirhayuki2002@gmail.com
- * @LastEditTime: 2026-02-05 22:16:28
- * @FilePath: /virid-project/packages/vue/decorators/vue.ts
- * @Description:各种Vue的魔法装饰器
- *
- * Copyright (c) 2026 by ShirahaYuki, All Rights Reserved.
+ * Copyright (c) 2026-present ShirahaYuki.
+ * Licensed under the Apache License, Version 2.0.
+ * Project: Virid Vue
  */
 import { VIRID_METADATA } from "./constants";
 import type { WatchOptions } from "vue";

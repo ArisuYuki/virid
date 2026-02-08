@@ -1,12 +1,7 @@
 /*
- * @Author: ShirahaYuki  shirhayuki2002@gmail.com
- * @Date: 2026-02-03 11:05:48
- * @LastEditors: ShirahaYuki  shirhayuki2002@gmail.com
- * @LastEditTime: 2026-02-07 12:48:11
- * @FilePath: /virid/packages/vue/adapters/bind.ts
- * @Description: hook绑定适配器，用于处理各种魔法装饰器的绑定逻辑
- *
- * Copyright (c) 2026 by ShirahaYuki, All Rights Reserved.
+ * Copyright (c) 2026-present ShirahaYuki.
+ * Licensed under the Apache License, Version 2.0.
+ * Project: Virid Vue
  */
 import { VIRID_METADATA } from "../decorators/constants";
 import {
@@ -23,8 +18,8 @@ import {
   onDeactivated,
   shallowRef,
 } from "vue";
-import { CCSSystemContext, ControllerMessage } from "../decorators";
-import { MessageWriter } from "@virid/core";
+import { ControllerMessage } from "../decorators";
+import { MessageWriter, type SystemContext } from "@virid/core";
 import { viridApp } from "../app";
 // controller注册表
 
@@ -416,7 +411,7 @@ export function bindListener(proto: any, instance: any): (() => void)[] {
     };
 
     // 给包装后的函数挂载上下文信息（供 Dispatcher 读取）
-    const taskContext: CCSSystemContext = {
+    const taskContext: SystemContext = {
       params: eventClass,
       targetClass: instance.constructor,
       methodName: propertyKey,

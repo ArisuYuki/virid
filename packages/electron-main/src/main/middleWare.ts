@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026-present ShirahaYuki.
+ * Licensed under the Apache License, Version 2.0.
+ * Project: Virid Electron Main
+ */
 import { Middleware, MessageWriter } from "@virid/core";
 import { ToRenderMessage } from "./types";
 import { ROUTER_MAP, VIRID_CHANNEL } from "./routingCenter";

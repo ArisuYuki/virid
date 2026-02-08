@@ -1,14 +1,8 @@
 /*
- * @Author: ShirahaYuki  shirhayuki2002@gmail.com
- * @Date: 2026-02-03 09:57:20
- * @LastEditors: ShirahaYuki  shirhayuki2002@gmail.com
- * @LastEditTime: 2026-02-08 14:59:39
- * @FilePath: /virid/packages/core/src/core/types.ts
- * @Description:  消息类型定义
- *
- * Copyright (c) 2026 by ShirahaYuki, All Rights Reserved.
+ * Copyright (c) 2026-present ShirahaYuki.
+ * Licensed under the Apache License, Version 2.0.
+ * Project: Virid Core
  */
-
 import { Newable } from "inversify";
 import { MessageWriter } from "./io";
 type AnyConstructor = abstract new (...args: any[]) => any;
@@ -20,11 +14,11 @@ export abstract class BaseMessage {
     // 实例化并传递给 Writer
     MessageWriter.write(this as any, ...args);
   }
-  public senderInfo?: {
-    fileName: string;
-    line: number;
-    timestamp: number;
-  };
+  // public senderInfo?: {
+  //   fileName: string;
+  //   line: number;
+  //   timestamp: number;
+  // };
 
   constructor() {
     // 仅在开发模式下开启，避免生产环境性能损耗
@@ -113,20 +107,20 @@ export type Hook<T extends BaseMessage> = (
     : T extends SingleMessage
       ? T[]
       : T,
-  context: CCSSystemContext,
+  context: HookContext,
 ) => void | Promise<void>;
 
-// 定义一个可以接受抽象类和普通类的类型
-export type MessageIdentifier<T> =
-  | (abstract new (...args: any[]) => T)
-  | (new (...args: any[]) => T);
-
 // 定义在 types.ts 中
-export interface CCSSystemContext {
+export interface SystemContext {
   params: any[]; // 参数类型定义列表
   targetClass: any; // System 所在的类
   methodName: string; // 方法名
   originalMethod: (...args: any[]) => any;
+}
+export interface HookContext {
+  context: SystemContext;
+  //一个可以在两个钩子之间传递任意数据的载荷
+  payload: { [key: string]: any };
 }
 
 export interface SystemTask {
@@ -142,3 +136,8 @@ export type MessagePayload<T> = T extends SingleMessage
   : T extends EventMessage
     ? T
     : T | T[]; // BaseMessage 可能是两者之一
+
+// 定义一个可以接受抽象类和普通类的类型
+export type MessageIdentifier<T> =
+  | (abstract new (...args: any[]) => T)
+  | (new (...args: any[]) => T);
