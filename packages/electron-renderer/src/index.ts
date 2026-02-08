@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Description: Electron render process adapter for virid, responsible for forwarding and receiving messages from the main process.
+ * Description: Electron renderer process adapter for virid, responsible for forwarding and receiving messages from the main process.
  */
 import { ViridPlugin, type ViridApp } from "@virid/core";
 export { ToMainMessage, FromMainMessage } from "./render";
