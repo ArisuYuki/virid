@@ -18,7 +18,7 @@ export function activateApp(app: ViridApp, options: PluginOption) {
   if (!options?.electronApp || !options?.messageMap) {
     MessageWriter.error(
       new Error(
-        `[Virid Electron-Main] Missing Initialization Parameters:\nelectronApp:${options?.electronApp}\nmessageMap${options?.messageMap}.`,
+        `[Virid Main] Missing Initialization Parameters:\nelectronApp:${options?.electronApp}\nmessageMap${options?.messageMap}.`,
       ),
     );
   }
@@ -29,7 +29,7 @@ export function activateApp(app: ViridApp, options: PluginOption) {
     if (!__virid_target || !__virid_source || !__virid_messageType) {
       MessageWriter.error(
         new Error(
-          `[Virid Electron-Main] Incomplete Message: The message is incomplete and requires __virid_target${__virid_target}, __virid_source${__virid_source}, __virid_messageType${__virid_messageType}`,
+          `[Virid Main] Incomplete Message: The message is incomplete and requires __virid_target${__virid_target}, __virid_source${__virid_source}, __virid_messageType${__virid_messageType}`,
         ),
       );
       return;
@@ -42,7 +42,7 @@ export function activateApp(app: ViridApp, options: PluginOption) {
       if (!win) {
         MessageWriter.error(
           new Error(
-            `[Virid Electron-Main] Unknown Window: Unable to find the window corresponding to event.sender`,
+            `[Virid Main] Unknown Window: Unable to find the window corresponding to event.sender`,
           ),
         );
         return;
@@ -51,7 +51,7 @@ export function activateApp(app: ViridApp, options: PluginOption) {
       if (ROUTER_MAP.has(__virid_source)) {
         MessageWriter.error(
           new Error(
-            `[Virid Electron-Main] Duplicate Registration: This ID has already been registered: ${__virid_source}`,
+            `[Virid Main] Duplicate Registration: This ID has already been registered: ${__virid_source}`,
           ),
         );
         return;
@@ -61,11 +61,9 @@ export function activateApp(app: ViridApp, options: PluginOption) {
       // 关闭时自动删除自己
       win.once("closed", () => {
         ROUTER_MAP.delete(__virid_source);
-        console.log(
-          `[Virid Electron-Main] Window unregistered: ${__virid_source}`,
-        );
+        console.log(`[Virid Main] Window unregistered: ${__virid_source}`);
       });
-      console.log(`[Virid Electron-Main] Window registered: ${__virid_source}`);
+      console.log(`[Virid Main] Window registered: ${__virid_source}`);
       return;
     }
     //分发消息

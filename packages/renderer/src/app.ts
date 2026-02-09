@@ -17,7 +17,7 @@ export function activateApp(app: ViridApp, options: PluginOption) {
   if (!window.__VIRID_BRIDGE__) {
     MessageWriter.error(
       new Error(
-        `[Virid Electron-Render] Preloading Failed: Please initialize in the preloaded script first.`,
+        `[Virid Render] Preloading Failed: Please initialize in the preloaded script first.`,
       ),
     );
   }
@@ -25,7 +25,7 @@ export function activateApp(app: ViridApp, options: PluginOption) {
   if (!options?.windowId || !options?.messageMap) {
     MessageWriter.error(
       new Error(
-        `[Virid Electron-Render] Activate Failed:\nPlease provide the windowId:${options?.windowId} and messageMap${options?.messageMap} in options.`,
+        `[Virid Render] Activate Failed:\nPlease provide the windowId:${options?.windowId} and messageMap${options?.messageMap} in options.`,
       ),
     );
   }

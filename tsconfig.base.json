@@ -12,14 +12,14 @@
             "@virid/amber": [
                 "packages/amber/src/index.ts"
             ],
-            "@virid/electron-main": [
-                "packages/electron-main/src/index.ts"
+            "@virid/main": [
+                "packages/main/src/index.ts"
             ],
-            "@virid/electron-renderer": [
-                "packages/electron-renderer/src/index.ts"
+            "@virid/renderer": [
+                "packages/renderer/src/index.ts"
             ],
-            "@virid/electron-bridge": [
-                "packages/electron-bridge/src/index.ts"
+            "@virid/bridge": [
+                "packages/bridge/src/index.ts"
             ],
             "@virid/vue": [
                 "packages/vue/src/index.ts"

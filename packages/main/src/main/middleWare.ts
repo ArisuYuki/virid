@@ -13,7 +13,7 @@ export const middleWare: Middleware = (message, next) => {
     //不准自己发给自己
     if (__virid_target == "main") {
       MessageWriter.warn(
-        `[Virid Electron-Main] Prohibit Sending To Oneself: ${__virid_target} is not allowed in ToRenderMessage.`,
+        `[Virid Main] Prohibit Sending To Oneself: ${__virid_target} is not allowed in ToRenderMessage.`,
       );
     }
     // 准备要发送的数据包
@@ -36,7 +36,7 @@ export const middleWare: Middleware = (message, next) => {
     } else {
       MessageWriter.error(
         new Error(
-          `[Virid Electron-Main] No Window Found: Message target ${__virid_target} cannot be found.`,
+          `[Virid Main] No Window Found: Message target ${__virid_target} cannot be found.`,
         ),
       );
     }

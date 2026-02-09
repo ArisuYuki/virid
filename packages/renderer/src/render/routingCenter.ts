@@ -26,16 +26,14 @@ export function convertToMainMessage(ipcMessage: any): void {
   if (!__virid_messageType || !__virid_source || !__virid_target) {
     MessageWriter.error(
       new Error(
-        `[Virid Electron-Render] Incomplete Data:\n__virid_source: ${__virid_source}\n__virid_target:${__virid_target}\n__virid_messageType: ${__virid_messageType}.`,
+        `[Virid Render] Incomplete Data:\n__virid_source: ${__virid_source}\n__virid_target:${__virid_target}\n__virid_messageType: ${__virid_messageType}.`,
       ),
     );
     return;
   }
   if (!MESSAGE_MAP.has(__virid_messageType)) {
     MessageWriter.error(
-      new Error(
-        `[Virid Electron-Render] Unregistered type: ${__virid_messageType} `,
-      ),
+      new Error(`[Virid Render] Unregistered type: ${__virid_messageType} `),
     );
     return;
   }

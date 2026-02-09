@@ -1,15 +1,15 @@
 {
-  "name": "@virid/electron-renderer",
+  "name": "@virid/main",
   "type": "module",
   "version": "0.0.1",
-  "description": "Electron renderer process adapter for virid, responsible for forwarding and receiving messages from the main process",
+  "description": "Electron main process adapter for Virid, responsible for sending, receiving, and broadcasting rendering process messages",
   "author": "ShirahaYuki",
   "license": "Apache 2.0",
   "keywords": [
     "electron",
-    "renderer",
     "virid",
-    "message"
+    "main",
+    "ipc"
   ],
   "repository": {
     "type": "git",
@@ -33,13 +33,14 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
+  "dependencies": {},
+  "peerDependencies": {
+    "electron": "^40.2.1",
+    "@virid/core": "workspace:*"
+  },
   "scripts": {
     "build": "tsup --config tsup.config.ts",
     "dev": "tsup --config tsup.config.ts --watch",
     "typecheck": "tsc --noEmit"
-  },
-  "dependencies": {},
-  "peerDependencies": {
-    "@virid/core": "workspace:*"
   }
 }

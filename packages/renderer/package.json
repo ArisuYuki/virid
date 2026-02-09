@@ -1,14 +1,15 @@
 {
-  "name": "@virid/electron-bridge",
+  "name": "@virid/renderer",
   "type": "module",
   "version": "0.0.1",
-  "description": "Electron application preloading script",
-  "license": "Apache 2.0",
+  "description": "Electron renderer process adapter for virid, responsible for forwarding and receiving messages from the main process",
   "author": "ShirahaYuki",
+  "license": "Apache 2.0",
   "keywords": [
     "electron",
+    "renderer",
     "virid",
-    "preload"
+    "message"
   ],
   "repository": {
     "type": "git",
@@ -37,7 +38,8 @@
     "dev": "tsup --config tsup.config.ts --watch",
     "typecheck": "tsc --noEmit"
   },
+  "dependencies": {},
   "peerDependencies": {
-    "electron": "^40.2.1"
+    "@virid/core": "workspace:*"
   }
 }

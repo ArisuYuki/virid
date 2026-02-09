@@ -20,14 +20,14 @@ By thoroughly decoupling logic from views, `virid` solves the problems of "state
 
 ## 📦 Module composition
 
-| **Module**                     | **Role**             | **Key Features**                                                                        |
-| ------------------------------ | -------------------- | --------------------------------------------------------------------------------------- |
-| **`@virid/core`**              | **Logic Kernel**     | Deterministic Tick mechanism, Double-buffered message pool, Inversion of Control (IoC). |
-| **`@virid/vue`**               | **UI Projection**    | Reactive Projections, Dependency Tethering, Lifecycle Bridging.                         |
-| **`@virid/electron-bridge`**   | **IPC Transport**    | Underlying messaging layer for Electron cross-process communication.                    |
-| **`@virid/electron-renderer`** | **Renderer Bridge**  | Renderer-side message dispatching, Main-process message deserialization.                |
-| **`@virid/electron-main`**     | **Main Bridge**      | Intelligent message routing, Multi-window message forwarding & arbitration.             |
-| **`@virid/amber`**             | **State Management** | Message replay, Temporal state recovery, Multi-track Undo/Redo.                         |
+| **Module**            | **Role**                    | **Key Features**                                                                        |
+| --------------------- | --------------------------- | --------------------------------------------------------------------------------------- |
+| **`@virid/core`**     | **Logic Kernel**            | Deterministic Tick mechanism, Double-buffered message pool, Inversion of Control (IoC). |
+| **`@virid/vue`**      | **UI Projection**           | Reactive Projections, Dependency Tethering, Lifecycle Bridging.                         |
+| **`@virid/bridge`**   | **IPC Transport**           | Underlying messaging layer for Electron cross-process communication.                    |
+| **`@virid/renderer`** | **Renderer Bridge**         | Renderer-side message dispatching, Main-process message deserialization.                |
+| **`@virid/main`**     | **Main Bridge**             | Intelligent message routing, Multi-window message forwarding & arbitration.             |
+| **`@virid/amber`**    | **Causal State Management** | Message replay, Temporal state recovery, Multi-track Undo/Redo.                         |
 
 ### 🎯 Key Advantages
 
@@ -45,7 +45,7 @@ For detailed implementation details and quick-start examples, please refer to th
 
 - 👉 **[@virid/core](packages/core/README.md)** – Learn about the **CCS Architecture**, message scheduling, and state management.
 - 👉 **[@virid/vue](packages/vue/README.md)** – Learn how to **project logic** onto the Vue view layer.
-- 👉 **[@virid/electron-bridge](packages/electron-bridge/README.md)** – Learn how to initialize **Electron preload scripts**.
-- 👉 **[@virid/electron-renderer](packages/electron-renderer/README.md)** – Learn how to dispatch messages from the **Renderer process** directly to the **Main process**.
-- 👉 **[@virid/electron-main](packages/electron-main/README.md)** – Learn how the **Main process** handles and routes messages from Renderer processes.
+- 👉 **[@virid/bridge](packages/bridge/README.md)** – Learn how to initialize **Electron preload scripts**.
+- 👉 **[@virid/renderer](packages/renderer/README.md)** – Learn how to dispatch messages from the **Renderer process** directly to the **Main process**.
+- 👉 **[@virid/main](packages/main/README.md)** – Learn how the **Main process** handles and routes messages from Renderer processes.
 - 👉 **[@virid/amber](packages/amber/README.md)** – Learn how to implement **message replay** and **Undo/Redo** functionality.

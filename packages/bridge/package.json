@@ -1,15 +1,14 @@
 {
-  "name": "@virid/electron-main",
+  "name": "@virid/bridge",
   "type": "module",
   "version": "0.0.1",
-  "description": "Electron main process adapter for Virid, responsible for sending, receiving, and broadcasting rendering process messages",
-  "author": "ShirahaYuki",
+  "description": "Electron application preloading script",
   "license": "Apache 2.0",
+  "author": "ShirahaYuki",
   "keywords": [
     "electron",
     "virid",
-    "main",
-    "ipc"
+    "preload"
   ],
   "repository": {
     "type": "git",
@@ -33,14 +32,12 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "dependencies": {},
-  "peerDependencies": {
-    "electron": "^40.2.1",
-    "@virid/core": "workspace:*"
-  },
   "scripts": {
     "build": "tsup --config tsup.config.ts",
     "dev": "tsup --config tsup.config.ts --watch",
     "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "electron": "^40.2.1"
   }
 }

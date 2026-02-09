@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Description: Electron main process adapter for Virid, responsible for sending, receiving, and broadcasting rendering process messages.
+ * Description: Electron renderer process adapter for virid, responsible for forwarding and receiving messages from the main process.
  */
 import { ViridPlugin, type ViridApp } from "@virid/core";
-import { type PluginOption } from "./main";
-export * from "./main";
+export { ToMainMessage, FromMainMessage } from "./render";
 import { activateApp } from "./app";
-export const MainPlugin: ViridPlugin<PluginOption> = {
-  name: "@virid/electron-main",
+import { type PluginOption } from "./render";
+export const RenderPlugin: ViridPlugin<PluginOption> = {
+  name: "@virid/render",
   install(app: ViridApp, options: PluginOption) {
     activateApp(app, options);
   },

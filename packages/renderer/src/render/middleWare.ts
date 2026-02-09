@@ -12,7 +12,7 @@ export const middleWare: Middleware = (message, next) => {
     //禁止发给自己
     if (__virid_target == ToMainMessage.__virid_source) {
       MessageWriter.warn(
-        `[Virid Electron-Render] Prohibit Sending To Oneself: ${__virid_target} is not allowed in ToRenderMessage.`,
+        `[Virid Render] Prohibit Sending To Oneself: ${__virid_target} is not allowed in ToRenderMessage.`,
       );
       return;
     }
