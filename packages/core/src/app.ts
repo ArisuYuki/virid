@@ -13,12 +13,13 @@ import {
   BaseMessage,
   SystemContext,
   ErrorMessage,
-  Hook,
+  ExecuteHook,
   MessageIdentifier,
   MessageWriter,
   Middleware,
   WarnMessage,
   MessageInternal,
+  TickHook,
 } from "./core";
 
 export interface ViridPlugin<T = any> {
@@ -37,8 +38,8 @@ export class ViridApp {
   private bindBase<T>(identifier: new (...args: any[]) => T) {
     return this.container.bind<T>(identifier).toSelf();
   }
-  get(identifier: any) {
-    return this.container.get(identifier);
+  get<T>(identifier: new (...args: any[]) => T): T {
+    return this.container.get<T>(identifier);
   }
 
   bindController<T>(
@@ -56,15 +57,21 @@ export class ViridApp {
   }
   onBeforeExecute<T extends BaseMessage>(
     type: MessageIdentifier<T>,
-    hook: Hook<T>,
+    hook: ExecuteHook<T>,
   ) {
     this.messageInternal.onBeforeExecute(type, hook);
   }
   onAfterExecute<T extends BaseMessage>(
     type: MessageIdentifier<T>,
-    hook: Hook<T>,
+    hook: ExecuteHook<T>,
   ) {
     this.messageInternal.onAfterExecute(type, hook);
+  }
+  onBeforeTick(hook: TickHook) {
+    this.messageInternal.onBeforeTick(hook);
+  }
+  onAfterTick(hook: TickHook) {
+    this.messageInternal.onAfterTick(hook);
   }
   register(
     eventClass: any,

@@ -5,7 +5,13 @@
  */
 import { Dispatcher } from "./dispatcher";
 import { EventHub } from "./eventHub";
-import { BaseMessage, Hook, MessageIdentifier, Middleware } from "./types";
+import {
+  BaseMessage,
+  ExecuteHook,
+  TickHook,
+  MessageIdentifier,
+  Middleware,
+} from "./types";
 import { MessageRegistry } from "./registry"; // 假设 Registry 存储了全局 Map
 import { MessageWriter, activatInstance } from "./io";
 
@@ -16,13 +22,6 @@ export class MessageInternal {
   readonly middlewares: Middleware[] = [];
 
   constructor() {
-    // 注入清理钩子
-    this.dispatcher.setCleanupHook((processedTypes) => {
-      // 清理 SIGNAL 类型的 activePool (按类型删)
-      this.eventHub.clearSignals(processedTypes);
-      // 清理已执行完的 EVENT 队列
-      this.eventHub.clearEvents();
-    });
     // 修改
     activatInstance(this);
   }
@@ -32,21 +31,36 @@ export class MessageInternal {
   }
   onBeforeExecute<T extends BaseMessage>(
     type: MessageIdentifier<T>,
-    hook: Hook<T>,
+    hook: ExecuteHook<T>,
   ) {
-    this.dispatcher.addBefore(type, hook);
+    this.dispatcher.addBeforeExecute(type, hook);
   }
   onAfterExecute<T extends BaseMessage>(
     type: MessageIdentifier<T>,
-    hook: Hook<T>,
+    hook: ExecuteHook<T>,
   ) {
-    this.dispatcher.addAfter(type, hook);
+    this.dispatcher.addAfterExecute(type, hook);
+  }
+  onBeforeTick(hook: TickHook) {
+    this.dispatcher.addBeforeTick(hook);
+  }
+  onAfterTick(hook: TickHook) {
+    this.dispatcher.addAfterTick(hook);
   }
 
   /**
    * 消息进入系统的唯一入口
    */
   dispatch(message: BaseMessage) {
+    // 不是继承自BaseMessage就报错
+    if (!(message instanceof BaseMessage)) {
+      MessageWriter.error(
+        new Error(
+          `[Virid Dispatch] Type Error: Message must be an instance of BaseMessage,message:${message}`,
+        ),
+      );
+      return;
+    }
     // 运行中间件管道
     this.pipeline(message, () => {
       //看看这个消息的处理函数在this.interestMap里有吗？没有就报错

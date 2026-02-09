@@ -1,5 +1,6 @@
 {
   "name": "@virid/core",
+  "type": "module",
   "version": "0.0.1",
   "description": "A lightweight and powerful message core built using dependency injection and CCS concepts",
   "author": "ShirahaYuki",
@@ -36,8 +37,7 @@
   },
   "scripts": {
     "build": "tsup --config tsup.config.ts",
-    "build:watch": "tsup --config tsup.config.ts --watch",
-    "example": "npm run build && node --import @swc-node/register/esm-register examples/index.ts"
+    "example": "node --import @swc-node/register/esm-register examples/index.ts"
   },
   "dependencies": {},
   "peerDependencies": {

@@ -18,11 +18,22 @@ export function System(priority: number = 0) {
     const originalMethod = descriptor.value;
     const types = Reflect.getMetadata("design:paramtypes", target, key) || [];
     if (types.length === 0) {
-      MessageWriter.error(
-        new Error(
-          `[Virid System] System Parameter Loss:\nUnable to recognize system parameters, please confirm if import "reflection-metadata" was introduced at the beginning!`,
-        ),
+      const error = new Error(
+        `[Virid System] System Parameter Loss:\nUnable to recognize system parameters, please confirm if import "reflection-metadata" was introduced at the beginning!`,
       );
+      MessageWriter.error(error);
+      return;
+    }
+    // 检查是否有参数类型丢失
+    if (types.some((t: any) => t === undefined)) {
+      const error =
+        new Error(`[Virid System] Parameter Metadata Loss in "${key}": 
+  One or more parameters have 'undefined' types. 
+  This usually happens when you forget to add a type annotation to a decorated parameter.
+  Check parameter at index: ${types.indexOf(undefined)}`);
+
+      MessageWriter.error(error);
+      return;
     }
     const readerConfigs: { index: number; eventClass: any; single: boolean }[] =
       Reflect.getMetadata(VIRID_METADATA.MESSAGE, target, key) || [];

@@ -97,18 +97,25 @@ export class AtomicModifyMessage<T> extends EventMessage {
     super();
   }
 }
-
+//-----------------------------------------------------------------------
 export type Middleware = (message: BaseMessage, next: () => void) => void;
 
 // 修改 Hook 定义，增加对基类的处理逻辑
-export type Hook<T extends BaseMessage> = (
+export type ExecuteHook<T extends BaseMessage> = (
   message: [BaseMessage] extends [T]
     ? SingleMessage[] | EventMessage // 如果是基类本身，可能是数组也可能是单体
     : T extends SingleMessage
       ? T[]
       : T,
-  context: HookContext,
+  context: ExecuteHookContext,
 ) => void | Promise<void>;
+
+export interface ExecuteHookContext {
+  context: SystemContext;
+  tick: number;
+  //一个可以在两个钩子之间传递任意数据的载荷
+  payload: { [key: string]: any };
+}
 
 // 定义在 types.ts 中
 export interface SystemContext {
@@ -117,27 +124,31 @@ export interface SystemContext {
   methodName: string; // 方法名
   originalMethod: (...args: any[]) => any;
 }
-export interface HookContext {
-  context: SystemContext;
-  //一个可以在两个钩子之间传递任意数据的载荷
-  payload: { [key: string]: any };
-}
 
 export interface SystemTask {
   fn: (...args: any[]) => any;
   priority: number;
 }
 
-/**
- * 核心逻辑：根据 T 的类型决定 Hook 接收的是数组还是单体
- */
 export type MessagePayload<T> = T extends SingleMessage
   ? T[]
   : T extends EventMessage
     ? T
     : T | T[]; // BaseMessage 可能是两者之一
 
-// 定义一个可以接受抽象类和普通类的类型
+// 一个可以接受抽象类和普通类的类型
 export type MessageIdentifier<T> =
   | (abstract new (...args: any[]) => T)
   | (new (...args: any[]) => T);
+
+//-------------------------------------------------------------------
+
+export type TickHook = (context: TickHookContext) => void | Promise<void>;
+
+export interface TickHookContext {
+  tick: number;
+  // 事务开始的时间戳（由 Dispatcher 统一提供）
+  timestamp: number;
+  // 在 Before 和 After 之间传递数据的载荷
+  payload: { [key: string]: any };
+}

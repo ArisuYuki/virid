@@ -1,10 +1,29 @@
 {
     "compilerOptions": {
+        "outDir": "./dist",
+        "types": [
+            "reflect-metadata"
+        ],
         "baseUrl": ".",
         "paths": {
             "@virid/core": [
-                "packages/core/index.ts"
+                "packages/core/src/index.ts"
             ],
+            "@virid/amber": [
+                "packages/amber/src/index.ts"
+            ],
+            "@virid/electron-main": [
+                "packages/electron-main/src/index.ts"
+            ],
+            "@virid/electron-renderer": [
+                "packages/electron-renderer/src/index.ts"
+            ],
+            "@virid/electron-bridge": [
+                "packages/electron-bridge/src/index.ts"
+            ],
+            "@virid/vue": [
+                "packages/vue/src/index.ts"
+            ]
         },
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,

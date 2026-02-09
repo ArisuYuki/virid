@@ -7,7 +7,8 @@ import {
   Message,
   SingleMessage,
   AtomicModifyMessage,
-} from "../dist/index";
+  BaseMessage,
+} from "@virid/core";
 // Define operation instructions (Message)
 class IncrementMessage extends SingleMessage {
   constructor(public amount: number) {
@@ -16,13 +17,25 @@ class IncrementMessage extends SingleMessage {
 }
 // Initialize the core engine
 const app = createVirid();
+
+app.onBeforeTick(() => {
+  console.log("----------------onBeforeTick------------------");
+});
 // Add execution hook
-app.onBeforeExecute(IncrementMessage, (message, context) => {
+app.onBeforeExecute(BaseMessage, (message, context) => {
   console.log("----------------onBeforeExecute------------------");
   console.log("message :>> ", message);
-  console.log("targetClass :>> ", context.targetClass);
-  console.log("methodName :>> ", context.methodName);
-  console.log("params :>> ", context.params);
+  console.log("context :>> ", context);
+  // console.log("methodName :>> ", context.context.methodName);
+  // console.log("params :>> ", context.context.params);
+});
+
+app.onAfterExecute(BaseMessage, (message, context) => {
+  console.log("----------------onAfterExecute------------------");
+});
+
+app.onAfterTick(() => {
+  console.log("----------------onAfterTick------------------");
 });
 // Define Data Entity (Component)
 @Component()

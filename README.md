@@ -27,7 +27,7 @@ By thoroughly decoupling logic from views, `virid` solves the problems of "state
 | **`@virid/electron-bridge`**   | **IPC Transport**    | Underlying messaging layer for Electron cross-process communication.                    |
 | **`@virid/electron-renderer`** | **Renderer Bridge**  | Renderer-side message dispatching, Main-process message deserialization.                |
 | **`@virid/electron-main`**     | **Main Bridge**      | Intelligent message routing, Multi-window message forwarding & arbitration.             |
-| **`@virid/time-machine`**      | **State Management** | Message replay, Temporal state recovery, Multi-track Undo/Redo.                         |
+| **`@virid/amber`**             | **State Management** | Message replay, Temporal state recovery, Multi-track Undo/Redo.                         |
 
 ### 🎯 Key Advantages
 
@@ -48,4 +48,4 @@ For detailed implementation details and quick-start examples, please refer to th
 - 👉 **[@virid/electron-bridge](packages/electron-bridge/README.md)** – Learn how to initialize **Electron preload scripts**.
 - 👉 **[@virid/electron-renderer](packages/electron-renderer/README.md)** – Learn how to dispatch messages from the **Renderer process** directly to the **Main process**.
 - 👉 **[@virid/electron-main](packages/electron-main/README.md)** – Learn how the **Main process** handles and routes messages from Renderer processes.
-- 👉 **[@virid/time-machine](packages/time-machine/README.md)** – Learn how to implement **message replay** and **Undo/Redo** functionality.
+- 👉 **[@virid/amber](packages/amber/README.md)** – Learn how to implement **message replay** and **Undo/Redo** functionality.

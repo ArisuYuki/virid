@@ -20,7 +20,7 @@
 | **`@virid/electron-bridge`**   | **electron消息转发层**   | -                                          |
 | **`@virid/electron-renderer`** | **electron渲染进程桥接** | 渲染进程消息发送、主进程消息反序列化       |
 | **`@virid/electron-main`**     | **electron主进程桥接**   | 消息路由、渲染进程转发                     |
-| **`@virid/time-machine`**      | **状态管理**             | 消息重放、状态回溯、undo/redo              |
+| **`@virid/amber`**             | **状态管理**             | 消息重放、状态回溯、undo/redo              |
 
 ## 🎯 核心优势
 
@@ -40,4 +40,4 @@
 - 👉 **[@virid/electron-bridge](packages/electron-bridge/README.md)** - 了解如何初始化electron渲染脚本
 - 👉 **[@virid/electron-renderer](packages/electron-renderer/README.md)** - 了解如何从渲染进程直接向主进程发消息
 - 👉 **[@virid/electron-main](packages/electron-main/README.md)** - 了解主进程如何处理渲染进程消息
-- 👉 **[@virid/time-machine](packages/time-machine/README.md)** - 了解如何使用消息重放、undo/redo功能
+- 👉 **[@virid/amber](packages/amber/README.md)** - 了解如何使用消息重放、undo/redo功能

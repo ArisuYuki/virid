@@ -1,41 +1,35 @@
 /*
  * Copyright (c) 2026-present ShirahaYuki.
  * Licensed under the Apache License, Version 2.0.
- * Project: Virid Vue
+ * Project: Virid Amber
  */
-import { bindResponsive } from "./adapters/bind";
+import { type ViridApp, MessageWriter, BaseMessage } from "@virid/core";
+import { amberStore, afterExecuteHooks, afterTickHooks } from "./amber";
 export interface IviridApp {
-  register(
-    eventClass: any,
-    systemFn: (...args: any[]) => any,
-    priority: number,
-  ): () => void;
   get(identifier: any): any;
-  bindComponent<T>(identifier: new (...args: any[]) => T);
 }
 
 let activeApp: IviridApp | null = null;
 
-/**
- * 激活真正的 App 实例
- */
-export function activateApp(app: IviridApp) {
-  activeApp = app;
-
+export function activateApp(app: ViridApp) {
+  //注册钩子
+  app.onAfterTick(afterTickHooks);
+  app.onAfterExecute(BaseMessage, afterExecuteHooks);
   // 缓存原始方法并绑定上下文，防止 this 指向丢失
   const originalMethod = app.bindComponent.bind(app);
-
   // 劫持 bindComponent
   app.bindComponent = <T>(identifier: new (...args: any[]) => T) => {
     const binding = originalMethod(identifier);
     // @ts-ignore: 注入钩子
-    return binding.onActivation((context, instance) => {
+    return binding.onActivation((_context, instance) => {
       if (instance) {
-        bindResponsive(instance);
+        //最终后悔药，实例化的时候，seal第一个版本
+        amberStore.seal(instance.constructor, instance);
       }
       return instance;
     });
   };
+  activeApp = app;
 }
 
 /**
@@ -46,21 +40,11 @@ export const viridApp: IviridApp = new Proxy({} as IviridApp, {
     return (...args: any[]) => {
       // 检查实例是否存在
       if (!activeApp) {
-        console.warn(
+        MessageWriter.warn(
           `[Virid Vue] App method "${String(prop)}" called before initialization.`,
         );
-
-        // 针对 register 这种有返回值的函数做特殊处理
-        if (prop === "register") {
-          return () => {
-            console.warn(
-              "[Virid Vue] Cleanup ignored: source listener was never registered.",
-            );
-          };
-        }
-        return undefined;
+        return null;
       }
-
       // 正常转发调用
       // 使用 Reflect 确保 this 指向正确，或者直接从 activeApp 调用
       const targetMethod = activeApp[prop];

@@ -14,6 +14,7 @@ export const middleWare: Middleware = (message, next) => {
       MessageWriter.warn(
         `[Virid Electron-Render] Prohibit Sending To Oneself: ${__virid_target} is not allowed in ToRenderMessage.`,
       );
+      return;
     }
     window.__VIRID_BRIDGE__.post({
       __virid_source: ToMainMessage.__virid_source,

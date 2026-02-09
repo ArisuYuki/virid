@@ -1,5 +1,6 @@
 {
   "name": "@virid/electron-renderer",
+  "type": "module",
   "version": "0.0.1",
   "description": "Electron renderer process adapter for virid, responsible for forwarding and receiving messages from the main process",
   "author": "ShirahaYuki",

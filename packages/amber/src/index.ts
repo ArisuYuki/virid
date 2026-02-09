@@ -17,8 +17,10 @@
  */
 import { ViridPlugin, type ViridApp } from "@virid/core";
 import { activateApp } from "./app";
-export const RenderPlugin: ViridPlugin<{}> = {
-  name: "@virid/time-machine",
+export * from "./amber";
+export * from "./decorators";
+export const AmberPlugin: ViridPlugin<{}> = {
+  name: "@virid/amber",
   install(app: ViridApp) {
     activateApp(app);
   },

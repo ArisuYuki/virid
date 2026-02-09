@@ -1,5 +1,6 @@
 {
-  "name": "@virid/time-machine",
+  "name": "@virid/amber",
+  "type": "module",
   "version": "0.0.1",
   "description": "Add replay, redo, undo and other functions to virid",
   "author": "ShirahaYuki",
@@ -34,8 +35,7 @@
   },
   "scripts": {
     "build": "tsup --config tsup.config.ts",
-    "dev": "tsup --config tsup.config.ts --watch",
-    "typecheck": "tsc --noEmit"
+    "example": "node --import @swc-node/register/esm-register examples/index.ts"
   },
   "dependencies": {},
   "peerDependencies": {
