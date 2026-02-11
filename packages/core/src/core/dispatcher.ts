@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2026-present ShirahaYuki.
+ * Copyright (c) 2026-present Ailrid.
  * Licensed under the Apache License, Version 2.0.
  * Project: Virid Core
  */
@@ -28,7 +28,8 @@ export class Dispatcher {
   private globalTick = 0; // 整个 App 生命周期内唯一、单调递增
   private internalDepth = 0; // 用于死循环防御，单次任务链执行完归零
   private eventHub: EventHub;
-  // 两个exectue钩子
+  private tickPayload: { [key: string]: any } = {};
+  // 两个execute钩子
   private beforeExecuteHooks: Array<{
     type: MessageIdentifier<any>;
     handler: ExecuteHook<any>;
@@ -48,21 +49,39 @@ export class Dispatcher {
   public addBeforeExecute<T extends BaseMessage>(
     type: MessageIdentifier<T>,
     hook: ExecuteHook<T>,
+    front: boolean,
   ) {
-    this.beforeExecuteHooks.push({ type, handler: hook as ExecuteHook<any> });
+    //从前面插入
+    if (front)
+      this.beforeExecuteHooks.unshift({
+        type,
+        handler: hook as ExecuteHook<any>,
+      });
+    else
+      this.beforeExecuteHooks.push({ type, handler: hook as ExecuteHook<any> });
   }
   public addAfterExecute<T extends BaseMessage>(
     type: MessageIdentifier<T>,
     hook: ExecuteHook<T>,
+    front: boolean,
   ) {
-    this.afterExecuteHooks.push({ type, handler: hook as ExecuteHook<any> });
+    //从前面插入
+    if (front)
+      this.afterExecuteHooks.unshift({
+        type,
+        handler: hook as ExecuteHook<any>,
+      });
+    else
+      this.afterExecuteHooks.push({ type, handler: hook as ExecuteHook<any> });
   }
   // 添加执行钩子
-  public addBeforeTick(hook: TickHook) {
-    this.beforeTickHooks.push(hook);
+  public addBeforeTick(hook: TickHook, front: boolean) {
+    if (front) this.beforeTickHooks.unshift(hook);
+    else this.beforeTickHooks.push(hook);
   }
-  public addAfterTick(hook: TickHook) {
-    this.afterTickHooks.push(hook);
+  public addAfterTick(hook: TickHook, front: boolean) {
+    if (front) this.afterTickHooks.unshift(hook);
+    else this.afterTickHooks.push(hook);
   }
 
   /**
@@ -78,7 +97,7 @@ export class Dispatcher {
     }
   }
 
-  public tick(interestMap: Map<any, SystemTask[]>) {
+  public tick(systemTaskMap: Map<any, SystemTask[]>) {
     if (
       this.isRunning ||
       (this.dirtySignalTypes.size === 0 && this.eventQueue.length === 0)
@@ -106,10 +125,13 @@ export class Dispatcher {
     queueMicrotask(() => {
       let signalSnapshot: Set<any> | undefined;
       let eventSnapshot: EventMessage[] | undefined;
-      let tickPayload: { [key: string]: any } = {};
       try {
-        //执行tick钩子
-        this.exectueTickHooks(this.beforeTickHooks, tickPayload);
+        //执行tick钩子,只在第一次才触发
+        if (this.internalDepth == 0) {
+          this.tickPayload = {};
+          this.executeTickHooks(this.beforeTickHooks);
+        }
+
         //准备开始执行
         const snapshot = this.prepareSnapshot();
         signalSnapshot = snapshot.signalSnapshot;
@@ -118,7 +140,7 @@ export class Dispatcher {
         const tasks = this.collectTasks(
           eventSnapshot,
           signalSnapshot,
-          interestMap,
+          systemTaskMap,
         );
         //执行这一帧的任务
         this.executeTasks(tasks);
@@ -133,9 +155,9 @@ export class Dispatcher {
         this.isRunning = false;
         if (this.dirtySignalTypes.size > 0 || this.eventQueue.length > 0) {
           // 此时 tick 立即进入下一轮
-          this.tick(interestMap);
+          this.tick(systemTaskMap);
         } else {
-          this.exectueTickHooks(this.afterTickHooks, tickPayload);
+          this.executeTickHooks(this.afterTickHooks);
           //标记当前tick
           this.globalTick++;
           // 重置内部状态
@@ -147,12 +169,12 @@ export class Dispatcher {
   private collectTasks(
     eventSnapshot: EventMessage[],
     signalSnapshot: Set<any>,
-    interestMap: Map<any, SystemTask[]>,
+    systemTaskMap: Map<any, SystemTask[]>,
   ): ExecutionTask[] {
     const tasks: ExecutionTask[] = [];
     // 收集 EVENT 任务 ,从前往后每一条消息执行所有关联 System
     for (const msg of eventSnapshot) {
-      const systems = interestMap.get(msg.constructor) || [];
+      const systems = systemTaskMap.get(msg.constructor) || [];
       systems.forEach((s) => {
         //拿到Context
         tasks.push(
@@ -168,7 +190,7 @@ export class Dispatcher {
     // 对 System 函数引用进行去重，防止同一个类型触发多次重复的 SIGNAL 处理
     const signalFnSet = new Set<any>();
     for (const type of signalSnapshot) {
-      const systems = interestMap.get(type) || [];
+      const systems = systemTaskMap.get(type) || [];
       systems.forEach((s) => {
         if (!signalFnSet.has(s.fn)) {
           tasks.push(
@@ -238,11 +260,11 @@ export class Dispatcher {
     // 清理已执行完的 EVENT 队列
     this.eventHub.clearEvents();
   }
-  private exectueTickHooks(hooks: TickHook[], payload: { [key: string]: any }) {
+  private executeTickHooks(hooks: TickHook[]) {
     const hooksContext: TickHookContext = {
       tick: this.globalTick,
       timestamp: Date.now(),
-      payload: payload,
+      payload: this.tickPayload,
     };
     hooks.forEach((h) => h(hooksContext));
   }
@@ -263,9 +285,6 @@ export class ExecutionTask {
     if (!sample) return;
 
     for (const hook of hooks) {
-      // --- 调试日志开始 ---
-      const isInstance = sample instanceof hook.type;
-      // --- 调试日志结束 ---
       if (sample instanceof hook.type) {
         try {
           const result = hook.handler(this.message, this.hookContext);
@@ -273,7 +292,7 @@ export class ExecutionTask {
             result.catch((e) =>
               MessageWriter.error(
                 e,
-                `[Virid Hook] Async Hook Error:\n${hook.type.name}`,
+                `[Virid Hook] Async Hook Error:\nIt is prohibited to use asynchronous hooks within Hook:\n${hook.type.name}`,
               ),
             );
           }

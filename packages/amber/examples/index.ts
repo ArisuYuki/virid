@@ -4,112 +4,132 @@ import {
   Component,
   System,
   Message,
-  EventMessage,
+  SingleMessage,
 } from "@virid/core";
-import { AmberPlugin, amberStore, Backup, VIRID_METADATA } from "@virid/amber";
+import { AmberPlugin, Backup, Amber, amberTickStore } from "@virid/amber"; // 假设在项目根目录运行
 
-// --- 1. 复杂状态定义 ---
+// --- 1. 定义测试环境 ---
 
-@Component()
-@Backup()
-class StatsComponent {
-  public level = 1;
-  public attrs = { strength: 10, agility: 10 }; // 嵌套对象测试深拷贝
-}
-
-@Component()
-@Backup()
-class InventoryComponent {
-  public slots: string[] = ["Rusty Sword"]; // 数组测试
-}
-
-class UpgradeMessage extends EventMessage {}
-
-class ChaosSystem {
-  @System()
-  static onUpgrade(
-    @Message(UpgradeMessage) _message: UpgradeMessage,
-    stats: StatsComponent,
-    inv: InventoryComponent,
-  ) {
-    stats.level += 1;
-    stats.attrs.strength += 5; // 修改深层属性
-    inv.slots.push(`Epic Shield +${stats.level}`); // 修改数组
+class ChangeMessage extends SingleMessage {
+  constructor(public value: number) {
+    super();
   }
 }
 
-async function runChaosTest() {
-  console.log("🔥 启动暴力混沌测试...");
-  const app = createVirid();
-  app.use(AmberPlugin, {});
-  app.bindComponent(StatsComponent);
-  app.bindComponent(InventoryComponent);
-
-  const stats = app.get(StatsComponent);
-  const inv = app.get(InventoryComponent);
-
-  // --- 步骤 1: 验证深拷贝隔离性 ---
-  console.log("\n[Step 1] 验证深拷贝隔离...");
-  UpgradeMessage.send(); // 触发 V1
-  await new Promise((r) => queueMicrotask(r));
-
-  const v1_strength = stats.attrs.strength; // 15
-
-  UpgradeMessage.send(); // 触发 V2
-  await new Promise((r) => queueMicrotask(r));
-  stats.attrs.strength = 999; // 暴力手动篡改 V2 的引用数据
-
-  amberStore.seek(StatsComponent, 1);
-  if (stats.attrs.strength === 15) {
-    console.log("✅ 深拷贝隔离成功: 修改 V2 引用不影响 V1 快照");
-  } else {
-    console.error(
-      "❌ 深拷贝失效: V1 的数据被 V2 污染了！值变成了:",
-      stats.attrs.strength,
+@Component()
+@Backup({
+  // 增加一个钩子观察恢复情况
+  onRestore: (old, now, dir) => {
+    console.log(
+      `[Hook] 组件恢复方向: ${dir}, 数据从 ${old.count} -> ${now.count}`,
     );
-  }
-
-  // --- 步骤 2: 极限滑动窗口 & 内存压力 ---
-  console.log("\n[Step 2] 极限滑动窗口压力测试 (1000次 Seal)...");
-  // 假设 maxStackSize 为 100
-  for (let i = 0; i < 1000; i++) {
-    stats.level++;
-    amberStore.seal(StatsComponent);
-  }
-  const currentV = Reflect.getMetadata(VIRID_METADATA.VERSION, StatsComponent);
-  console.log(`当前逻辑版本已达: ${currentV}`);
-
-  const canSeekOld = amberStore.seek(StatsComponent, currentV - 150);
-  console.log(
-    `尝试回滚到 150 个版本前 (预期失败): ${!canSeekOld ? "✅" : "❌"}`,
-  );
-
-  const canSeekBoundary = amberStore.seek(StatsComponent, currentV - 50);
-  console.log(
-    `尝试回滚到窗口内版本 (预期成功): ${canSeekBoundary ? "✅" : "❌"}`,
-  );
-
-  console.log("\n[Step 3] 跨组件同步回滚测试...");
-  // 此时 Stats 和 Inventory 的版本可能不同步了，因为上面的循环只 seal 了 Stats
-  const vStats = Reflect.getMetadata(VIRID_METADATA.VERSION, StatsComponent);
-  const vInv = Reflect.getMetadata(VIRID_METADATA.VERSION, InventoryComponent);
-  console.log(`Stats Version: ${vStats}, Inventory Version: ${vInv}`);
-
-  // 暴力同步：同时修改两者
-  UpgradeMessage.send();
-  await new Promise((r) => queueMicrotask(r));
-
-  const syncV_Stats = Reflect.getMetadata(
-    VIRID_METADATA.VERSION,
-    StatsComponent,
-  );
-  const syncV_Inv = Reflect.getMetadata(
-    VIRID_METADATA.VERSION,
-    InventoryComponent,
-  );
-  console.log(`同步后 - Stats V: ${syncV_Stats}, Inv V: ${syncV_Inv}`);
-
-  console.log("\n✨ 暴力测试结束。");
+  },
+})
+class PlayerComponent {
+  public count = 0;
 }
 
-runChaosTest();
+class PlayerSystem {
+  @System()
+  static onChange(
+    @Message(ChangeMessage) msg: ChangeMessage,
+    player: PlayerComponent,
+  ) {
+    player.count += msg.value;
+  }
+}
+
+// 初始化 App 并安装插件
+const app = createVirid();
+app.use(AmberPlugin, {});
+
+app.bindComponent(PlayerComponent);
+
+// 获取实例用于断言
+const player = app.get(PlayerComponent);
+
+// --- 2. 开始测试流 ---
+
+async function runTest() {
+  console.log(">>> 测试开始：初始化检查");
+  // V0: 初始状态应为 0
+  console.assert(player.count === 0, "初始数据应为0");
+  console.assert(Amber.getVersion(PlayerComponent) === 0, "初始版本应为0");
+
+  // --- 第一阶段：产生历史 ---
+  console.log("\n>>> 第一阶段：模拟两次数据变更");
+  ChangeMessage.send(10); // 产生 Tick 1, Version 1
+
+  await nextTick();
+  console.log(
+    `Tick 1 完成: count=${player.count}, version=${Amber.getVersion(PlayerComponent)}`,
+  );
+
+  ChangeMessage.send(20); // 产生 Tick 2, Version 2
+  await nextTick();
+  console.log(
+    `Tick 2 完成: count=${player.count}, version=${Amber.getVersion(PlayerComponent)}`,
+  );
+
+  // --- 第二阶段：局部撤销 (Undo) ---
+  console.log("\n>>> 第二阶段：执行局部撤销");
+  Amber.undo(PlayerComponent); // 应该回到 count=10, 但产生 Tick 3
+  console.assert(player.count === 10, "局部撤销后 count 应为 10");
+  console.log(
+    `局部撤销完成: count=${player.count}, version=${Amber.getVersion(PlayerComponent)}`,
+  );
+
+  // --- 第三阶段：全局撤销 (UndoTick) ---
+  console.log("\n>>> 第三阶段：全局撤销");
+  // 目前处于 Tick 4 (因为刚才的 undo 产生了一个新 Tick)
+  // 我们连退两步，看看能不能回到最初
+  Amber.undoTick();
+  Amber.undoTick();
+  console.log(
+    `全局连退两步完成: count=${player.count}, Tick指针=${amberTickStore.currentTick}`,
+  );
+
+  // --- 第四阶段：未来坍塌测试 ---
+  console.log("\n>>> 第四阶段：修改历史引发平行宇宙坍塌");
+  // 现在我们在过去修改数据，原本的“未来”应该被删掉
+  ChangeMessage.send(999);
+  await nextTick();
+  const canRedo = Amber.canRedoTick();
+  console.log(`修改后是否有重做可能: ${canRedo} (预期应为 false)`);
+
+  // ... 前面部分保持一致 ...
+
+  // --- 第五阶段：局部重置与全局归零 ---
+  console.log("\n>>> 第五阶段：局部重置与全局归零");
+
+  // 确保此时 player.count 确实是 999
+  console.log(`重置前数值: ${player.count}`);
+
+  Amber.resetComponent(PlayerComponent);
+
+  console.log(`重置后数值: ${player.count}`);
+  console.log(`重置后版本: ${Amber.getVersion(PlayerComponent)}`);
+
+  // 关键断言检查
+  if (player.count !== 1009) {
+    console.error(`[ERROR] 数据丢失！预期 1009，实际为 ${player.count}`);
+  } else {
+    console.log("[SUCCESS] 局部重置成功保持了当前状态。");
+  }
+
+  Amber.resetAll();
+
+  // 全局重置后的检查
+  await nextTick();
+  console.log(`全局重置后 Tick 指针: ${amberTickStore.currentTick}`);
+  console.log(`全局重置后版本: ${Amber.getVersion(PlayerComponent)}`);
+}
+
+/**
+ * 辅助函数：等待 Virid Tick 完成
+ */
+function nextTick() {
+  return new Promise((resolve) => queueMicrotask(resolve));
+}
+
+runTest().catch(console.error);

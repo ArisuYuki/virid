@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2026-present ShirahaYuki
+ * Copyright (c) 2026-present Ailrid
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import { ViridPlugin, type ViridApp } from "@virid/core";
 export * from "./adapters";
 export * from "./decorators";
 import { activateApp } from "./app";
-export const VuePlugin: ViridPlugin<{}> = {
+export const VuePlugin: ViridPlugin = {
   name: "@virid/vue",
   install(app: ViridApp, _options) {
     activateApp(app);

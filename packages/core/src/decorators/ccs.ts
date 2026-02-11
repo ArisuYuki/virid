@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2026-present ShirahaYuki.
+ * Copyright (c) 2026-present Ailrid.
  * Licensed under the Apache License, Version 2.0.
  * Project: Virid Core
  */
@@ -8,7 +8,22 @@ import { BaseMessage, MessageWriter } from "../core";
 import { VIRID_METADATA } from "./constants";
 import { injectable } from "inversify";
 import { SystemContext, EventMessage, SingleMessage } from "../core/types";
-import "reflect-metadata";
+
+// 统一处理返回值：System 可以直接 return 一个消息来实现“链式反应”
+export const handleResult = (res: any) => {
+  if (!res) return;
+  const messages = Array.isArray(res) ? res : [res];
+  messages.forEach((m) => {
+    if (m instanceof BaseMessage) {
+      MessageWriter.write(m);
+    } else {
+      MessageWriter.warn(
+        `[Vrid HandleResult] Invalid Return Type: Must return Message or  Message[].`,
+      );
+    }
+  });
+};
+
 /**
  * @description: 系统装饰器
  * @param priority 优先级，数值越大越早执行
@@ -101,17 +116,6 @@ export function System(priority: number = 0) {
       // 执行业务逻辑
       const result = originalMethod(...args);
 
-      // 统一处理返回值：System 可以直接 return 一个消息来实现“链式反应”
-      const handleResult = (res: any) => {
-        if (!res) return;
-        const messages = Array.isArray(res) ? res : [res];
-        messages.forEach((m) => {
-          if (m instanceof BaseMessage) {
-            MessageWriter.write(m);
-          }
-        });
-      };
-
       return result instanceof Promise
         ? result.then(handleResult)
         : handleResult(result);
@@ -165,13 +169,27 @@ export function Safe() {
 }
 
 /**
+ * @description: 标识Component里的这个属性被改了之后需要调用一个回调
+ */
+export function Observer(
+  callback: (old_val: any, new_vale: any) => void | BaseMessage | BaseMessage,
+  [],
+) {
+  return (target: any, propertyKey: string) => {
+    // 记录哪些属性需要变成响应式
+    const props = Reflect.getMetadata(VIRID_METADATA.OBSERVER, target) || [];
+    props.push({ propertyKey, callback });
+    Reflect.defineMetadata(VIRID_METADATA.OBSERVER, props, target);
+  };
+}
+
+/**
  * @description: 标记Controller身份
  */
 export function Controller() {
   return (target: any) => {
-    // 1. 依然要保持它可被依赖注入
     injectable()(target);
-    // 2. 打上身份标签
+    // 打上身份标签
     Reflect.defineMetadata(VIRID_METADATA.CONTROLLER, true, target);
   };
 }

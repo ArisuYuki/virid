@@ -3,7 +3,7 @@
   "type": "module",
   "version": "0.0.1",
   "description": "Electron main process adapter for Virid, responsible for sending, receiving, and broadcasting rendering process messages",
-  "author": "ShirahaYuki",
+  "author": "Ailrid",
   "license": "Apache 2.0",
   "keywords": [
     "electron",

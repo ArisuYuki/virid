@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2026-present ShirahaYuki
+ * Copyright (c) 2026-present Ailrid
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,13 @@
  */
 import { ViridPlugin, type ViridApp } from "@virid/core";
 import { activateApp } from "./app";
+import { PluginOptions } from "./amber";
+
 export * from "./amber";
 export * from "./decorators";
-export const AmberPlugin: ViridPlugin<{}> = {
+export const AmberPlugin: ViridPlugin<PluginOptions> = {
   name: "@virid/amber",
-  install(app: ViridApp) {
-    activateApp(app);
+  install(app: ViridApp, options) {
+    activateApp(app, options);
   },
 };

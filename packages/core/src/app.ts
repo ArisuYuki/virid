@@ -1,30 +1,29 @@
 /*
- * Copyright (c) 2026-present ShirahaYuki.
+ * Copyright (c) 2026-present Ailrid.
  * Licensed under the Apache License, Version 2.0.
  * Project: Virid Core
  */
 import {
   BindInWhenOnFluentSyntax,
-  BindWhenOnFluentSyntax,
+  BindWhenFluentSyntax,
   Container,
 } from "inversify";
 import {
-  AtomicModifyMessage,
   BaseMessage,
-  SystemContext,
-  ErrorMessage,
   ExecuteHook,
   MessageIdentifier,
   MessageWriter,
   Middleware,
-  WarnMessage,
   MessageInternal,
   TickHook,
 } from "./core";
+import { bindObservers } from "./decorators";
+import { MessageRegistry } from "./core/registry";
+import { initializeGlobalSystems } from "./utils";
 
 export interface ViridPlugin<T = any> {
   name: string;
-  install: (app: ViridApp, options: T) => void;
+  install: (app: ViridApp, options?: T) => void;
 }
 
 // 维护一个已安装插件的列表，防止重复安装
@@ -35,6 +34,11 @@ const installedPlugins = new Set<string>();
 export class ViridApp {
   public container: Container = new Container();
   private messageInternal: MessageInternal = new MessageInternal();
+  // Core 内部提供一个中间件数组
+  private activationHooks: Array<(context: any, instance: any) => void> = [];
+  public addActivationHook(hook: (context: any, instance: any) => void) {
+    this.activationHooks.push(hook);
+  }
   private bindBase<T>(identifier: new (...args: any[]) => T) {
     return this.container.bind<T>(identifier).toSelf();
   }
@@ -49,40 +53,58 @@ export class ViridApp {
   }
   bindComponent<T>(
     identifier: new (...args: any[]) => T,
-  ): BindWhenOnFluentSyntax<T> {
-    return this.bindBase(identifier).inSingletonScope();
+  ): BindWhenFluentSyntax<T> {
+    return this.bindBase(identifier)
+      .inSingletonScope()
+      .onActivation((context, instance) => {
+        if (instance) {
+          // 执行 Core 自己的 Observer
+          bindObservers(instance);
+          // 执行所有插件注册进来的钩子
+          this.activationHooks.forEach((hook) => {
+            try {
+              hook(context, instance);
+            } catch (e) {
+              // hook崩了不能影响核心流程
+              MessageWriter.error(
+                e,
+                `[Virid Core] Activation hook failed: ${hook.name}`,
+              );
+            }
+          });
+        }
+        return instance;
+      });
   }
-  useMiddleware(mw: Middleware) {
-    this.messageInternal.useMiddleware(mw);
+  useMiddleware(mw: Middleware, front = false) {
+    this.messageInternal.useMiddleware(mw, front);
   }
   onBeforeExecute<T extends BaseMessage>(
     type: MessageIdentifier<T>,
     hook: ExecuteHook<T>,
+    front = false,
   ) {
-    this.messageInternal.onBeforeExecute(type, hook);
+    this.messageInternal.onBeforeExecute(type, hook, front);
   }
   onAfterExecute<T extends BaseMessage>(
     type: MessageIdentifier<T>,
     hook: ExecuteHook<T>,
+    front = false,
   ) {
-    this.messageInternal.onAfterExecute(type, hook);
+    this.messageInternal.onAfterExecute(type, hook, front);
   }
-  onBeforeTick(hook: TickHook) {
-    this.messageInternal.onBeforeTick(hook);
+  onBeforeTick(hook: TickHook, front = false) {
+    this.messageInternal.onBeforeTick(hook, front);
   }
-  onAfterTick(hook: TickHook) {
-    this.messageInternal.onAfterTick(hook);
+  onAfterTick(hook: TickHook, front = false) {
+    this.messageInternal.onAfterTick(hook, front);
   }
   register(
     eventClass: any,
     systemFn: (...args: any[]) => any,
     priority: number = 0,
   ): () => void {
-    return this.messageInternal.registry.register(
-      eventClass,
-      systemFn,
-      priority,
-    );
+    return this.messageInternal.register(eventClass, systemFn, priority);
   }
   use<T>(plugin: ViridPlugin<T>, options: T): this {
     if (installedPlugins.has(plugin.name)) {
@@ -106,114 +128,4 @@ export class ViridApp {
 
 export const viridApp = new ViridApp();
 
-//---------------------------------------------注册几个默认的处理函数---------------------------------------
-
-/**
- * 为全局处理器包装上下文
- */
-function withContext(
-  params: any,
-  fn: (...args: any[]) => any,
-  methodName: string,
-) {
-  const context: SystemContext = {
-    params: params, // 参数类型
-    targetClass: Object, // 指向全局 Object 或特定标记类
-    methodName: methodName,
-    originalMethod: fn,
-  };
-  (fn as any).ccsContext = context;
-  return fn;
-}
-
-/**
- * 简单的色彩辅助函数
- */
-const clr = {
-  reset: "\x1b[0m",
-  red: "\x1b[31m",
-  yellow: "\x1b[33m",
-  blue: "\x1b[34m",
-  magenta: "\x1b[35m",
-  cyan: "\x1b[36m",
-  gray: "\x1b[90m",
-  bold: "\x1b[1m",
-};
-
-/**
- * 注册全局默认错误处理系统
- */
-const globalErrorHandler = (err: ErrorMessage) => {
-  const header = `${clr.red}${clr.bold} ✖ [Virid Error] ${clr.reset}`;
-  const context = `${clr.magenta}${err.context}${clr.reset}`;
-
-  console.error(
-    `${header}${clr.gray}Global Error Caught:${clr.reset}\n` +
-      `  ${clr.red}Context:${clr.reset} ${context}\n` +
-      `  ${clr.red}Details:${clr.reset}`,
-    err.error || "Unknown Error",
-  );
-};
-
-viridApp.register(
-  ErrorMessage,
-  withContext(ErrorMessage, globalErrorHandler, "GlobalErrorHandler"),
-  -999,
-);
-
-/**
- * 注册全局默认警告处理系统
- */
-const globalWarnHandler = (warn: WarnMessage) => {
-  const header = `${clr.yellow}${clr.bold} ⚠ [Virid Warn] ${clr.reset}`;
-  const context = `${clr.cyan}${warn.context}${clr.reset}`;
-
-  console.warn(
-    `${header}${clr.gray}Global Warn Caught:${clr.reset}\n` +
-      `  ${clr.yellow}Context:${clr.reset} ${context}`,
-  );
-};
-
-viridApp.register(
-  WarnMessage,
-  withContext(WarnMessage, globalWarnHandler, "GlobalWarnHandler"),
-  -999,
-);
-
-/**
- * 注册修改处理器
- */
-const atomicModifyHandler = (modifications: AtomicModifyMessage<any>) => {
-  // 从 Registry 拿到未经 Proxy 劫持的原始对象 (Raw)
-  const rawComponent = viridApp.container.get(modifications.ComponentClass);
-
-  if (!rawComponent) {
-    console.error(
-      `[Virid Modify] Component Not Found:\n Component ${modifications.ComponentClass.name} not found in Registry.`,
-    );
-    return;
-  }
-  // 执行修改逻辑
-  try {
-    modifications.recipe(rawComponent);
-    // 记录显式的审计日志
-    MessageWriter.warn(
-      `[Virid Modify] Successfully:\nModify on ${modifications.ComponentClass.name}\nlabel: ${modifications.label}`,
-    );
-  } catch (e) {
-    MessageWriter.error(
-      e as Error,
-      `[Virid Error] Modify Failed:\n${modifications.label}`,
-    );
-  }
-};
-
-viridApp.register(
-  AtomicModifyMessage,
-  withContext(
-    AtomicModifyMessage<any>,
-    atomicModifyHandler,
-    "GlobalAtomicModifier",
-  ),
-  1000, // 修改器优先级通常极高，确保状态第一时间更新
-);
+initializeGlobalSystems(viridApp);

@@ -1,34 +1,39 @@
 /*
- * Copyright (c) 2026-present ShirahaYuki.
+ * Copyright (c) 2026-present Ailrid.
  * Licensed under the Apache License, Version 2.0.
  * Project: Virid Amber
  */
 import { type ViridApp, MessageWriter, BaseMessage } from "@virid/core";
-import { amberStore, afterExecuteHooks, afterTickHooks } from "./amber";
+import {
+  amberComponentStore,
+  afterExecuteHooks,
+  afterTickHooks,
+  PluginOptions,
+  activateConfig,
+} from "./amber";
+import { VIRID_METADATA } from "./decorators";
 export interface IviridApp {
   get(identifier: any): any;
 }
 
 let activeApp: IviridApp | null = null;
 
-export function activateApp(app: ViridApp) {
+export function activateApp(app: ViridApp, options: PluginOptions) {
   //注册钩子
-  app.onAfterTick(afterTickHooks);
-  app.onAfterExecute(BaseMessage, afterExecuteHooks);
-  // 缓存原始方法并绑定上下文，防止 this 指向丢失
-  const originalMethod = app.bindComponent.bind(app);
-  // 劫持 bindComponent
-  app.bindComponent = <T>(identifier: new (...args: any[]) => T) => {
-    const binding = originalMethod(identifier);
-    // @ts-ignore: 注入钩子
-    return binding.onActivation((_context, instance) => {
-      if (instance) {
-        //最终后悔药，实例化的时候，seal第一个版本
-        amberStore.seal(instance.constructor, instance);
-      }
-      return instance;
-    });
+  app.onAfterTick(afterTickHooks, true);
+  app.onAfterExecute(BaseMessage, afterExecuteHooks, true);
+  //看看用户提供的配置
+  if (options) activateConfig(options);
+  const amberInitHook = (_context, instance) => {
+    if (
+      instance &&
+      Reflect.hasMetadata(VIRID_METADATA.VERSION, instance.constructor)
+    ) {
+      //实例化的时候，init第一个版本
+      amberComponentStore.initComponent(instance);
+    }
   };
+  app.addActivationHook(amberInitHook);
   activeApp = app;
 }
 
@@ -45,6 +50,7 @@ export const viridApp: IviridApp = new Proxy({} as IviridApp, {
         );
         return null;
       }
+
       // 正常转发调用
       // 使用 Reflect 确保 this 指向正确，或者直接从 activeApp 调用
       const targetMethod = activeApp[prop];

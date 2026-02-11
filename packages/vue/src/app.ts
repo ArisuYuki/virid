@@ -1,8 +1,9 @@
 /*
- * Copyright (c) 2026-present ShirahaYuki.
+ * Copyright (c) 2026-present Ailrid.
  * Licensed under the Apache License, Version 2.0.
  * Project: Virid Vue
  */
+import { type ViridApp } from "@virid/core";
 import { bindResponsive } from "./adapters/bind";
 export interface IviridApp {
   register(
@@ -19,23 +20,14 @@ let activeApp: IviridApp | null = null;
 /**
  * 激活真正的 App 实例
  */
-export function activateApp(app: IviridApp) {
-  activeApp = app;
-
-  // 缓存原始方法并绑定上下文，防止 this 指向丢失
-  const originalMethod = app.bindComponent.bind(app);
-
-  // 劫持 bindComponent
-  app.bindComponent = <T>(identifier: new (...args: any[]) => T) => {
-    const binding = originalMethod(identifier);
-    // @ts-ignore: 注入钩子
-    return binding.onActivation((context, instance) => {
-      if (instance) {
-        bindResponsive(instance);
-      }
-      return instance;
-    });
+export function activateApp(app: ViridApp) {
+  const bindResponsiveHook = (_context, instance) => {
+    if (instance) {
+      bindResponsive(instance);
+    }
   };
+  app.addActivationHook(bindResponsiveHook);
+  activeApp = app;
 }
 
 /**

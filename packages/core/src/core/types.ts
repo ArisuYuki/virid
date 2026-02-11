@@ -1,11 +1,17 @@
 /*
- * Copyright (c) 2026-present ShirahaYuki.
+ * Copyright (c) 2026-present Ailrid.
  * Licensed under the Apache License, Version 2.0.
  * Project: Virid Core
  */
-import { Newable } from "inversify";
 import { MessageWriter } from "./io";
+
+export type Newable<
+  TInstance = unknown,
+  TArgs extends unknown[] = any[],
+> = new (...args: TArgs) => TInstance;
+
 type AnyConstructor = abstract new (...args: any[]) => any;
+
 export abstract class BaseMessage {
   static send<T extends AnyConstructor>(
     this: T,
@@ -14,34 +20,6 @@ export abstract class BaseMessage {
     // 实例化并传递给 Writer
     MessageWriter.write(this as any, ...args);
   }
-  // public senderInfo?: {
-  //   fileName: string;
-  //   line: number;
-  //   timestamp: number;
-  // };
-
-  constructor() {
-    // 仅在开发模式下开启，避免生产环境性能损耗
-    // @ts-ignore
-    // if (process.env.NODE_ENV === "development") {
-    //   this.senderInfo = this.captureSender();
-    // }
-  }
-  // protected captureSender() {
-  //   const stack = new Error().stack?.split("\n");
-  //   // stack[0] 是 Error 本身
-  //   // stack[1] 是 captureSender
-  //   // stack[2] 是 BaseMessage 的构造函数
-  //   // stack[3] 通常就是调用 MessageWriter.write 的地方
-  //   const callerLine = stack?.[3] || "";
-  //   // 用正则提取出 文件名:行号
-  //   const match = callerLine.match(/\((.*):(\d+):(\d+)\)/);
-  //   return {
-  //     fileName: match ? match[1].split("/").pop()! : "unknown",
-  //     line: match ? parseInt(match[2]) : 0,
-  //     timestamp: Date.now(),
-  //   };
-  // }
 }
 /**
  * 可合并的信号基类
@@ -139,7 +117,7 @@ export type MessagePayload<T> = T extends SingleMessage
 // 一个可以接受抽象类和普通类的类型
 export type MessageIdentifier<T> =
   | (abstract new (...args: any[]) => T)
-  | (new (...args: any[]) => T);
+  | Newable<T>;
 
 //-------------------------------------------------------------------
 

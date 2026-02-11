@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2026-present ShirahaYuki.
+ * Copyright (c) 2026-present Ailrid.
  * Licensed under the Apache License, Version 2.0.
  * Project: Virid Vue
  */
@@ -197,9 +197,14 @@ export function bindWatch(proto: any, instance: any) {
 
 export function bindResponsive(instance: any) {
   if (!instance || typeof instance !== "object") return;
-  if (Object.prototype.hasOwnProperty.call(instance, "__ccs_processed__"))
+  if (
+    Object.prototype.hasOwnProperty.call(
+      instance,
+      "__virid_responsive_processed__",
+    )
+  )
     return;
-  Object.defineProperty(instance, "__ccs_processed__", {
+  Object.defineProperty(instance, "__virid_responsive_processed__", {
     value: true,
     enumerable: false,
   });
@@ -230,7 +235,7 @@ export function bindResponsive(instance: any) {
   // 只针对已经“Ref化”的对象或普通属性进行深度处理
   // 使用 Reflect.ownKeys 获取所有属性，包括不可枚举的
   Reflect.ownKeys(instance).forEach((key) => {
-    if (key === "__ccs_processed__") return;
+    if (key === "__virid_responsive_processed__") return;
     const val = instance[key]; // 这里会触发上面定义的 get()
     if (val && typeof val === "object" && !isRef(val)) {
       // 递归处理子对象

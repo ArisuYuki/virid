@@ -3,7 +3,7 @@
   "type": "module",
   "version": "0.0.1",
   "description": "A lightweight and powerful message core built using dependency injection and CCS concepts",
-  "author": "ShirahaYuki",
+  "author": "Ailrid",
   "license": "Apache 2.0",
   "keywords": [
     "ioc",

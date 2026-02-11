@@ -3,7 +3,7 @@
   "type": "module",
   "version": "0.0.1",
   "description": "Add replay, redo, undo and other functions to virid",
-  "author": "ShirahaYuki",
+  "author": "Ailrid",
   "license": "Apache 2.0",
   "keywords": [
     "replay",
