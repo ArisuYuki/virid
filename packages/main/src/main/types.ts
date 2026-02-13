@@ -3,7 +3,7 @@
  * Licensed under the Apache License, Version 2.0.
  * Project: Virid Electron Main
  */
-import { EventMessage } from "@virid/core";
+import { EventMessage, Newable } from "@virid/core";
 import { type App } from "electron";
 export { type SystemContext } from "@virid/core";
 /**
@@ -48,6 +48,6 @@ export interface PluginOption {
    */
   electronApp: App;
   messageMap:
-    | Record<string, new (...args: any[]) => FromRenderMessage>
-    | Map<string, new (...args: any[]) => FromRenderMessage>;
+    | Record<string, Newable<FromRenderMessage>>
+    | Map<string, Newable<FromRenderMessage>>;
 }

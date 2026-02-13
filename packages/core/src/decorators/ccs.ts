@@ -6,7 +6,6 @@
 import { viridApp } from "../app";
 import { BaseMessage, MessageWriter } from "../core";
 import { VIRID_METADATA } from "./constants";
-import { injectable } from "inversify";
 import { SystemContext, EventMessage, SingleMessage } from "../core/types";
 
 // 统一处理返回值：System 可以直接 return 一个消息来实现“链式反应”
@@ -188,7 +187,6 @@ export function Observer(
  */
 export function Controller() {
   return (target: any) => {
-    injectable()(target);
     // 打上身份标签
     Reflect.defineMetadata(VIRID_METADATA.CONTROLLER, true, target);
   };
@@ -198,7 +196,6 @@ export function Controller() {
  */
 export function Component() {
   return (target: any) => {
-    injectable()(target);
     // 打上组件标签
     Reflect.defineMetadata(VIRID_METADATA.COMPONENT, true, target);
   };

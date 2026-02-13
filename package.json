@@ -19,7 +19,6 @@
     "@swc-node/register": "^1.11.1",
     "@swc/core": "^1.15.11",
     "cross-env": "^10.1.0",
-    "inversify": "^7.11.0",
     "reflect-metadata": "^0.2.2",
     "tsup": "^8.5.1",
     "typescript": "^5.9.3"

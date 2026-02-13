@@ -3,11 +3,7 @@
  * Licensed under the Apache License, Version 2.0.
  * Project: Virid Core
  */
-import {
-  BindInWhenOnFluentSyntax,
-  BindWhenFluentSyntax,
-  Container,
-} from "inversify";
+import { ViridContainer } from "./container";
 import {
   BaseMessage,
   ExecuteHook,
@@ -16,9 +12,9 @@ import {
   Middleware,
   MessageInternal,
   TickHook,
+  Newable,
 } from "./core";
 import { bindObservers } from "./decorators";
-import { MessageRegistry } from "./core/registry";
 import { initializeGlobalSystems } from "./utils";
 
 export interface ViridPlugin<T = any> {
@@ -32,49 +28,54 @@ const installedPlugins = new Set<string>();
  * 创建 virid 核心实例
  */
 export class ViridApp {
-  public container: Container = new Container();
+  public container: ViridContainer = new ViridContainer();
   private messageInternal: MessageInternal = new MessageInternal();
   // Core 内部提供一个中间件数组
   private activationHooks: Array<(context: any, instance: any) => void> = [];
   public addActivationHook(hook: (context: any, instance: any) => void) {
     this.activationHooks.push(hook);
   }
-  private bindBase<T>(identifier: new (...args: any[]) => T) {
-    return this.container.bind<T>(identifier).toSelf();
+
+  public get<T>(identifier: Newable<T>): T {
+    if (identifier.length > 0) {
+      MessageWriter.error(
+        new Error(
+          `[Virid Container] Violation: Component "${identifier.name}" should not have constructor arguments. Dependency Injection is only allowed in Systems.`,
+        ),
+      );
+    }
+    return this.container.get(identifier, (ins) => this.handleActivation(ins));
   }
-  get<T>(identifier: new (...args: any[]) => T): T {
-    return this.container.get<T>(identifier);
+  // 统一的激活逻辑处理
+  private handleActivation<T>(instance: T): T {
+    if (instance) {
+      bindObservers(instance); // 执行 Core 的 Observer
+      this.activationHooks.forEach((hook) => {
+        try {
+          // 这里的 context 传入 null 或模拟对象，因为我们不再依赖 Inversify 的 context
+          hook(null, instance);
+        } catch (e) {
+          MessageWriter.error(e, `[Virid Core] Activation hook failed`);
+        }
+      });
+    }
+    return instance;
+  }
+  /**
+   * 绑定多例 (Controller 通常是多例)
+   */
+  bindController<T>(identifier: Newable<T>) {
+    this.container.bind(identifier).toSelf();
+    // 保持链式调用风格，即便现在后面没接东西
+    return { inSingletonScope: () => ({ onActivation: () => {} }) };
   }
 
-  bindController<T>(
-    identifier: new (...args: any[]) => T,
-  ): BindInWhenOnFluentSyntax<T> {
-    return this.bindBase(identifier);
-  }
-  bindComponent<T>(
-    identifier: new (...args: any[]) => T,
-  ): BindWhenFluentSyntax<T> {
-    return this.bindBase(identifier)
-      .inSingletonScope()
-      .onActivation((context, instance) => {
-        if (instance) {
-          // 执行 Core 自己的 Observer
-          bindObservers(instance);
-          // 执行所有插件注册进来的钩子
-          this.activationHooks.forEach((hook) => {
-            try {
-              hook(context, instance);
-            } catch (e) {
-              // hook崩了不能影响核心流程
-              MessageWriter.error(
-                e,
-                `[Virid Core] Activation hook failed: ${hook.name}`,
-              );
-            }
-          });
-        }
-        return instance;
-      });
+  /**
+   * 绑定单例 (Component 是单例)
+   */
+  bindComponent<T>(identifier: Newable<T>) {
+    this.container.bind(identifier).toSelf().inSingletonScope();
+    return { onActivation: () => {} };
   }
   useMiddleware(mw: Middleware, front = false) {
     this.messageInternal.useMiddleware(mw, front);
