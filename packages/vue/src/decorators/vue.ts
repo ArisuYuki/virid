@@ -5,6 +5,8 @@
  */
 import { VIRID_METADATA } from "./constants";
 import type { WatchOptions } from "vue";
+
+import { BaseMessage, Newable } from "@virid/core";
 import { ControllerMessage } from "./types";
 
 /**
@@ -163,7 +165,7 @@ export function Env() {
  * 模仿 Bevy 的即时响应机制，但严格限制其只能处理 UI 逻辑
  */
 export function Listener<T extends ControllerMessage>(
-  eventClass: new (...args: any[]) => T,
+  eventClass: Newable<T>,
   priority: number = 0,
   single = true,
 ) {

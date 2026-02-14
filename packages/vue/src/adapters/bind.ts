@@ -406,6 +406,16 @@ export function bindListener(proto: any, instance: any): (() => void)[] {
 
     // 强制只能接受一个参数且是 SingleMessage
     const wrappedHandler = function (msgs: ControllerMessage[]) {
+      const sample = Array.isArray(msgs) ? msgs[0] : msgs;
+      if (!(sample instanceof eventClass)) {
+        // 如果类型不匹配，说明 Dispatcher 路由逻辑或元数据配置有问题
+        MessageWriter.error(
+          new Error(
+            `[Virid Listener] Type Mismatch: Expected ${eventClass.name}, but received ${sample?.constructor.name}`,
+          ),
+        );
+        return null;
+      }
       // 只有当确实有消息时才触发，没消息不空跑
       const message: ControllerMessage | ControllerMessage[] =
         single && Array.isArray(msgs) ? msgs[msgs.length - 1] : msgs;

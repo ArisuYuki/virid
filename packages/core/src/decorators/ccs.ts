@@ -90,15 +90,11 @@ export function System(priority: number = 0) {
               ? currentMessage
               : [currentMessage];
           }
-
           // 处理 EventMessage (顺序单发类型)
           if (sample instanceof EventMessage) {
-            // Event 消息本身就是单体投递的，直接返回
-            // 即便用户传了 single: true 也是它本身
             return currentMessage;
           }
-
-          // 回退处理（处理 BaseMessage 这种模糊基类）
+          // 回退处理
           return currentMessage;
         }
         // 处理普通的依赖注入
